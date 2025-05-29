@@ -6,7 +6,6 @@ import { BadRequestError } from '../errors/bad-request-error';
 import { ConflictError } from '../errors/conflict-error';
 import { NotFoundError } from '../errors/not-found-error';
 import { UnauthorizedError } from '../errors/unauthorized-error';
-import { hashPassword, comparePassword, generateToken } from '../utils/jwt';
 import {z} from "zod";
 
 type CreateConsultData = z.infer<typeof CreateConsultSchema>;
