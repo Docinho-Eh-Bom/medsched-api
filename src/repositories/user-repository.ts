@@ -2,20 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import { User, MedicData, PatientData } from "../models/user";
 import { UserRepositoryInterface } from "./user-repository.interface";
 import { NotFoundError } from "../errors/not-found-error";
+import { BadRequestError } from "../errors/bad-request-error";
 
 const prisma = new PrismaClient();
 
-export class UserRepository implements UserRepositoryInterface{
-
-    private static users: User[] = [];
-    
+export class UserRepository implements UserRepositoryInterface{    
     async create(user: Omit<User, 'id'> & { medicData?: MedicData } & {patientData?: PatientData}): Promise<User> {
         let newUser;
 
         if(user.role === 'admin'){
             newUser = await prisma.user.create({
                 data: {
-                    id: crypto.randomUUID(),
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
@@ -29,7 +26,6 @@ export class UserRepository implements UserRepositoryInterface{
             }
             newUser = await prisma.user.create({
                 data:{
-                    id: crypto.randomUUID(),
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
@@ -49,7 +45,6 @@ export class UserRepository implements UserRepositoryInterface{
             }
             newUser = await prisma.user.create({
                 data: {
-                    id: crypto.randomUUID(),
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
@@ -65,7 +60,6 @@ export class UserRepository implements UserRepositoryInterface{
                 }, include: { patient: true }
             });
         }
-        UserRepository.users.push(newUser);
         return newUser as User;
     }
 

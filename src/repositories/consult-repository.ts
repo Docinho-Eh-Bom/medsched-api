@@ -1,17 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { Consult, ConsultStatus } from "../models/consult";
 import { ConsultRepositoryInterface } from "./consult-repository.interface";
+import { NotFoundError } from "../errors/not-found-error";
+import { BadRequestError } from "../errors/bad-request-error";
 
 const prisma = new PrismaClient();
 
 export class ConsultRepository implements ConsultRepositoryInterface{
 
-    private static consults: Consult[] = [];
-
     async create(consult: Omit<Consult, 'id' | 'createdAt' | 'updatedAt'>):Promise<Consult> {
         const newConsult = await prisma.consult.create({
             data: {
-                id: crypto.randomUUID(), // Generate a unique ID for the consult
                 date: consult.date,
                 status: consult.status,
                 notes: consult.notes,
@@ -19,76 +18,128 @@ export class ConsultRepository implements ConsultRepositoryInterface{
                 medicId: consult.medicId
             }
         });
-        ConsultRepository.consults.push(newConsult)
 ;        return newConsult as Consult;
     }
 
     //find consult by id    
      async findById(id: String): Promise<Consult | null> {
-        const consult = await prisma.consult.findUnique({
+        try{
+            const consult = await prisma.consult.findUnique({
             where: { id }
         });
         return consult as Consult | null;
+        }catch(error) {
+            throw new NotFoundError("Consult not found.");
+            return null;
+        }
     }
 
     //find consult by patient id
     async findByPatientId(patientId: string): Promise<Consult[]> {
-        const consults = await prisma.consult.findMany({
-            where: { patientId }
+        try{
+            const consults = await prisma.consult.findMany({
+            where: { patientId },
+            orderBy: { date: 'asc' }
         });
         return consults as Consult[];
+        }catch(error) {
+            throw new NotFoundError("Could not retrieve consults for the specified patient.");
+            return [];
+        }
+
     }
     
     //find consult by medic id
     async findByMedicId(medicId: string): Promise<Consult[]> {
-        const consults = await prisma.consult.findMany({
-            where: { medicId }
+        try{
+            const consults = await prisma.consult.findMany({
+            where: { medicId },
+            orderBy: { date: 'asc' }
         });
         return consults as Consult[];
+        }catch(error) {
+            throw new NotFoundError("Could not retrieve consults for the specified medic.");
+            return [];
+        }
     }
 
     //update consult by consult id, omitting certain fields
     //because medics can alter it, if it was only admins i wouldn't omit
     async update(id: string, consult: Partial<Omit<Consult, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Consult | null> {
-        const updatedConsult = await prisma.consult.update({
+        try{
+            const updatedConsult = await prisma.consult.update({
             where: { id },
-            data: consult
+            data: {
+                ...consult,
+                updatedAt: new Date() 
+            }
         });
         return updatedConsult as Consult | null;
+        }catch(error) {
+            throw new BadRequestError("Could not update consult. Please check the provided data.");
+            return null;
+        }
     }
 
     //update consult status
     async updateStatus(id: string, status: ConsultStatus): Promise<Consult | null> {
-        const updatedConsult = await prisma.consult.update({
+        try{
+            const updatedConsult = await prisma.consult.update({
             where: { id },
-            data: { status }
+            data: { 
+                status,
+                updatedAt: new Date()
+             }
         });
         return updatedConsult as Consult | null;
+        }catch(error) {
+            throw new BadRequestError("Could not update consult status. Please check the provided data.");
+            return null;
+        }
     }
 
     //list consults by status
     async listByStatus(status: ConsultStatus): Promise<Consult[]> {
-        const consults = await prisma.consult.findMany({
-            where: { status }
+        try{
+            const consults = await prisma.consult.findMany({
+            where: { status },
+            orderBy: { date: 'asc' }
         });
         return consults as Consult[];
+        }catch(error) {
+            throw new NotFoundError("Could not retrieve consults for the specified status.");
+            return [];
+        }
     }
 
     //add notes to a consult
     async addNotes(id: string, notes: string): Promise<Consult | null> {
-        const updatedConsult = await prisma.consult.update({
+        try{
+            const updatedConsult = await prisma.consult.update({
             where: { id },
-            data: { notes }
+            data: { 
+                notes,
+                updatedAt: new Date() 
+             }
         });
         return updatedConsult as Consult | null;
+        }catch(error) {
+            throw new BadRequestError("Could not add notes to consult. Please check the provided data.");
+            return null;
+        }
     }
 
     //delete a consult 
     async delete(id: string): Promise<Consult | null> {
-        const deletedConsult = await prisma.consult.delete({
+        try{
+            const deletedConsult = await prisma.consult.delete({
             where: { id }
         });
         return deletedConsult as Consult | null;
+        }catch(error) {
+            throw new NotFoundError("Could not delete consult. Consult not found.");
+            return null;
+        }
     }
 
 }
