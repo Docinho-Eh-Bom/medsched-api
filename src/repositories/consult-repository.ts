@@ -22,7 +22,7 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     }
 
     //find consult by id    
-     async findById(id: String): Promise<Consult | null> {
+    async findById(id: String): Promise<Consult | null> {
         try{
             const consult = await prisma.consult.findUnique({
             where: { id }
@@ -89,7 +89,7 @@ export class ConsultRepository implements ConsultRepositoryInterface{
             data: { 
                 status,
                 updatedAt: new Date()
-             }
+            }
         });
         return updatedConsult as Consult | null;
         }catch(error) {
@@ -120,7 +120,7 @@ export class ConsultRepository implements ConsultRepositoryInterface{
             data: { 
                 notes,
                 updatedAt: new Date() 
-             }
+            }
         });
         return updatedConsult as Consult | null;
         }catch(error) {
