@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum UserRole{
+    ADMIN
+    MEDIC
+    PATIENT
+}
+
+enum ConsultStatus{
+    SCHEDULED
+    COMPLETED
+    CANCELLED
+}
+
+//base user model 
+model User{
+    id        String     @id @default(uuid())
+    firstName String
+    lastName  String
+    email     String  @unique
+    password  String
+    role      UserRole
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    //role secific relation
+    medic Medic?
+    patient Patient?
+    //relations
+    consultsAsMedic Consult[] @relation("ConsultsAsMedic")
+    consultsAsPatient Consult[] @relation("ConsultsAsPatient")
+}
+
+//model for patients
+model Patient{
+    id        String     @id @default(uuid())
+    userId    String     @unique
+    user      User       @relation(fields: [userId], references: [id])
+    cpf       String        @unique
+    cellphone String? @unique
+    birthDate DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//model for medics
+model Medic{
+    id        String     @id @default(uuid())
+    userId    String     @unique
+    user      User       @relation(fields: [userId], references: [id])
+    speciality String
+    crm       String        @unique
+    availableSlots AvailableSlot[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+//model for available slots for medics because prisma does not accept lists of primitive types 
+model AvailableSlot {
+    id        String   @id @default(uuid())
+    date      DateTime
+    medic     Medic    @relation(fields: [medicId], references: [id])
+    medicId   String
+}
+
+//model for consults
+model Consult{
+    id        String    @id @default(uuid())
+    date      DateTime
+    status    ConsultStatus @default(SCHEDULED)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    notes    String?
+    
+    
+    //relationships
+    medicId         String
+    medic           User           @relation("ConsultsAsMedic", fields: [medicId], references: [id])
+  
+    patientId       String
+    patient         User           @relation("ConsultsAsPatient", fields: [patientId], references: [id])
+}
+
+
