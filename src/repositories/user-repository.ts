@@ -65,7 +65,8 @@ export class UserRepository implements UserRepositoryInterface{
 
     //find user by id 
     async findById(id: string): Promise<User | null>{
-        const user = await prisma.user.findUnique({
+        try{
+            const user = await prisma.user.findUnique({
             where: { id },
             include: {
                 medic: true,
@@ -73,11 +74,16 @@ export class UserRepository implements UserRepositoryInterface{
             }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("User not found.");
+            return null;
+        }
     }
 
     //find user by first name 
     async findByFirstName(firstName: string): Promise<User | null> {
-        const user = await prisma.user.findFirst({
+        try{
+            const user = await prisma.user.findFirst({
             where: { firstName },
             include: {
                 medic: true,
@@ -85,11 +91,16 @@ export class UserRepository implements UserRepositoryInterface{
             }
         });
         return user as User | null;
+        }catch(error){  
+            throw new NotFoundError("User not found.");
+            return null;
+        }
     }
 
     //find user by last name
     async findByLastName(lastName: string): Promise<User | null> {
-        const user = await prisma.user.findFirst({
+        try{
+            const user = await prisma.user.findFirst({
             where: { lastName },
             include: {
                 medic: true,
@@ -97,53 +108,73 @@ export class UserRepository implements UserRepositoryInterface{
             }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("User not found.");
+            return null;
+        }
     }
 
     //find user by email
     async findByEmail(email: string): Promise<User | null> {
-        const user = await prisma.user.findFirst({
+        try{
+            const user = await prisma.user.findFirst({
             where: { email },
             include: {
                 medic: true,
                 patient: true
-            }
+                }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("User not found.");
+            return null;
+        }
     }
 
     //find user(patient) by cpf
     async findByCpf(cpf: string): Promise<User | null> {
-        const user = await prisma.user.findFirst({
-            where: {
-                patient: {
-                    cpf
+        try{
+            const user = await prisma.user.findFirst({
+                where: {
+                    patient: {
+                        cpf
+                    }
+                },
+                include: {
+                    patient: true
                 }
-            },
-            include: {
-                patient: true
-            }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("Patient not found.");
+            return null;
+        }
     }
 
     //find user(medic) by crm
     async findByCrm(crm: string): Promise<User | null> {
-        const user = await prisma.user.findFirst({
-            where: {
-                medic: {
-                    crm
+        try{
+            const user = await prisma.user.findFirst({
+                where: {
+                    medic: {
+                        crm
+                    }
+                },
+                include: {
+                    medic: true
                 }
-            },
-            include: {
-                medic: true
-            }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("Medic not found.");
+            return null;
+        }
     }
 
     
     //find user(medic) by speciality
     async findBySpeciality(speciality: string): Promise<User | null> {
+        try{
         const user = await prisma.user.findFirst({
             where: {
                 medic: {
@@ -155,10 +186,15 @@ export class UserRepository implements UserRepositoryInterface{
             }
         });
         return user as User | null;
+        }catch(error){
+            throw new NotFoundError("Medic not found.");
+            return null;
+        }
     }
 
     //list by role
     async listByRole(role: 'admin' | 'medic' | 'patient'): Promise<User[]> {
+        try{
         const users = await prisma.user.findMany({
             where: { role },
             include: {
@@ -167,10 +203,15 @@ export class UserRepository implements UserRepositoryInterface{
             }
         });
         return users as User[];
+        }catch(error){
+            throw new NotFoundError("No users found for the specified role.");
+            return [];
+        }
     }
 
     //adding available slot for medic
     async addMedicAvailableSlot(medicId: string, date: Date): Promise<MedicData> {
+        try{
         const medic = await prisma.medic.update({
             where: { id: medicId },
             data: {
@@ -181,20 +222,29 @@ export class UserRepository implements UserRepositoryInterface{
             include: { availableSlots: true }
         });
         return medic as MedicData;
+        }catch(error) {
+            throw new BadRequestError("Could not add available slot for the medic.");
+        }
     }
 
 
     //get available slots for medic
     async getMedicAvailableSlots(medicId: string): Promise<Date[]> {
-        const medic = await prisma.medic.findUnique({
-            where: { id: medicId },
-            select: { availableSlots: true }
+        try{
+            const medic = await prisma.medic.findUnique({
+                where: { id: medicId },
+                select: { availableSlots: true }
         });
         return medic?.availableSlots || [];
+        }catch(error){
+            throw new NotFoundError("Medic not found or has no available slots.");
+            return [];
+        }
     }
 
     //get patient data
     async getPatientData(patientId: string): Promise<PatientData | null> {
+        try{
         const patient = await prisma.patient.findUnique({
             where: { id: patientId },
             include: {
@@ -210,11 +260,16 @@ export class UserRepository implements UserRepositoryInterface{
                 birthDate: patient.birthDate
             }
         };
+        }catch(error){
+            throw new NotFoundError("Patient not found.");
+            return null;
+        }
     }
 
     //get medic data
     async getMedicData(medicId: string): Promise<MedicData | null> {
-        const medic = await prisma.medic.findUnique({
+        try{
+            const medic = await prisma.medic.findUnique({
             where: { id: medicId },
             include: {
                 user: true
@@ -229,6 +284,10 @@ export class UserRepository implements UserRepositoryInterface{
                 availableSlots: medic.availableSlots || []
             }
         };
+        }catch(error){
+            throw new NotFoundError("Medic not found.");
+            return null;
+        }
     }
 
 
