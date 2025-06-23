@@ -32,7 +32,7 @@ export class ConsultService{
     return consult;
 }
 
-  //create a new consult
+    //create a new consult
     async create(data: CreateConsultData, patientId: string,medicId: string): Promise<Consult>{
     //if medic exists and is a medic
     const medic = await this.userRepository.findById(data.medicId);
@@ -55,13 +55,13 @@ export class ConsultService{
     return consult;
     }
 
-  //get by consult id
+    //get by consult id
     async getById(consultId: string, userId: string, userRole: string): Promise<Consult[]> {
     const consult = await this.validateConsultOwnership(consultId, userId, userRole);
     return [consult];
     }
 
-  //get by patient id
+    //get by patient id
     async getByPatientId(patientId: string, userId: string, userRole: string): Promise<Consult[]> {
     if (userRole !== 'admin' && userId !== patientId) {
         throw new UnauthorizedError("You don't have permission to access this patient's consults.");
