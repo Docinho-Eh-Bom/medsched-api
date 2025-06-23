@@ -10,15 +10,15 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 });
 
-//const parsedEnv = envSchemafeParse(process.env);
-//if (!parsedEnv.success) {
-//  console.error(parsedEnv.error.format());
-//  process.exit(1);
-//}
+const parsedEnv = envSchema.safeParse(process.env);
+if (!parsedEnv.success) {
+  console.error(parsedEnv.error.format());
+  process.exit(1);
+}
 
-//export const env = {
-//   JWT_SECRET: parsedEnv.data.JWT_SECRET,
-//   PORT: parsedEnv.data.PORT,
-//   NODE_ENV: parsedEnv.data.NODE_ENV,
-//   DATABASE_URL: parsedEnv.data.DATABASE_URL,
-//}
+export const env = {
+  JWT_SECRET: parsedEnv.data.JWT_SECRET,
+  PORT: parsedEnv.data.PORT,
+  NODE_ENV: parsedEnv.data.NODE_ENV,
+  DATABASE_URL: parsedEnv.data.DATABASE_URL,
+}
