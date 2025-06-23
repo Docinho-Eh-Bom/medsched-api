@@ -9,8 +9,8 @@ export const baseUserSchema = z.object({
   password: z.string().min(6, "Password must have at least 6 characters")
       .max(20, "Password must have at most 20 characters")
       .regex(
-         /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).+$/,
-         "Password must contain at least one letter, one number, and one special character."
+        /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).+$/,
+        "Password must contain at least one letter, one number, and one special character."
       ),
   createdAt: z.date(),
   updatedAt: z.date(),
