@@ -63,6 +63,57 @@ export class UserRepository implements UserRepositoryInterface{
         return newUser as User;
     }
 
+    //update user
+    async update(userId: string, data: Partial<Omit<User, 'id'>> & { medicData?: MedicData } & { patientData?: PatientData }): Promise<User> {
+        try {
+            const user = await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    email: data.email,
+                    password: data.password,
+                    medic: data.medicData ? {
+                        update: {
+                            speciality: data.medicData.speciality,
+                            crm: data.medicData.crm
+                        }
+                    } : undefined,
+                    patient: data.patientData ? {
+                        update: {
+                            cpf: data.patientData.cpf,
+                            cellphone: data.patientData.cellphone,
+                            birthDate: data.patientData.birthDate
+                        }
+                    } : undefined
+                },
+                include: {
+                    medic: true,
+                    patient: true
+                }
+            });
+            return user as User;
+        } catch (error) {
+            throw new BadRequestError("Could not update user.");
+        }
+    }
+
+    //delete user by id
+    async delete(userId: string): Promise<User | null> {
+        try {
+            const deletedUser = await prisma.user.delete({
+                where: { id: userId },
+                include: {
+                    medic: true,
+                    patient: true
+                }
+            });
+            return deletedUser as User;
+        } catch (error) {
+            throw new NotFoundError("User not found.");
+        }
+    }
+    
     //find user by id 
     async findById(id: string): Promise<User | null>{
         try{
