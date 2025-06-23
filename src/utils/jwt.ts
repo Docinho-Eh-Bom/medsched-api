@@ -12,8 +12,9 @@ export function comparePassword(password: string, hash: string): boolean {
 }
 
 export function generateToken(user: User): string {
+   const { id: userId, role } = user;
    return jwt.sign(
-      { id: user.id, role: user.role }, 
+      { userId, role }, 
       env.JWT_SECRET,
       { expiresIn: '1h' }
    );
