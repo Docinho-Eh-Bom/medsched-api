@@ -25,7 +25,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     }
 }
 
-export async function authorize(...roles: UserRole[]) {
+export function authorize(...roles: UserRole[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         if(!req.user || !roles.includes(req.user.role)){
             throw new UnauthorizedError("Access denied.");
