@@ -175,8 +175,8 @@ export class UserService{
     }
 
     //list users by role (of course its for admins only)
-    async lisByRole(role: UserRole, requestRole: UserRole): Promise<Omit<User, 'password'>[]> {
-        if (requestRole !== 'admin') {
+    async listByRole(role: UserRole, requesterRole: UserRole): Promise<Omit<User, 'password'>[]> {
+        if (requesterRole !== 'admin') {
             throw new UnauthorizedError("You don't have permission to list users by role.");
         }
 
