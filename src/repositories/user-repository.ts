@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { User, MedicData, PatientData } from "../models/user";
+import { User, MedicData, PatientData } from "../models/User";
 import { UserRepositoryInterface } from "./user-repository.interface";
 import { NotFoundError } from "../errors/not-found-error";
 import { BadRequestError } from "../errors/bad-request-error";
