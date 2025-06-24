@@ -1,5 +1,5 @@
 import { userRoleValidation } from "../schema/users-schema";
-import { UserRepository } from "../repositories/user-repository";
+import { UserRepository } from "../repositories/users-repository";
 import { User, UserRole } from "../models/User";
 import { BadRequestError } from "../errors/bad-request-error";
 import { NotFoundError } from "../errors/not-found-error";

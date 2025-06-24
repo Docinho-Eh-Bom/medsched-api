@@ -1,6 +1,6 @@
 import { CreateConsultSchema, UpdateConsultStatusSchema,  } from './../schema/consult-schema';
 import { ConsultRepository } from './../repositories/consult-repository';
-import { UserRepository } from '../repositories/user-repository';
+import { UserRepository } from '../repositories/users-repository';
 import { Consult, ConsultStatus } from "../models/consult";
 import { BadRequestError } from '../errors/bad-request-error';
 import { ConflictError } from '../errors/conflict-error';
