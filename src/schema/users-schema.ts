@@ -31,6 +31,10 @@ const medicDataSchema =z.object({
     availableSlots: z.array(z.date()).optional(),
 })
 
+//schema for user roles
+export const userRoleSchema = z.enum(["admin", "patient", "medic"]);
+export type UserRole = z.infer<typeof userRoleSchema>;
+
 export const userRoleValidation = {
   createUserSchema: z.discriminatedUnion("role", [
       baseUserSchema.extend({
