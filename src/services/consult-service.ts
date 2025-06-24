@@ -33,7 +33,7 @@ export class ConsultService{
 }
 
     //create a new consult
-    async create(data: CreateConsultData, patientId: string,medicId: string): Promise<Consult>{
+    async createConsult(data: CreateConsultData, patientId: string,medicId: string): Promise<Consult>{
     //if medic exists and is a medic
     const medic = await this.userRepository.findById(data.medicId);
     if (!medic || medic.role !== 'medic') {
@@ -125,7 +125,7 @@ export class ConsultService{
     }
 
     //delete consult
-    async delete(consultId: string, userId: string, userRole: string): Promise<Consult> {
+    async deleteConsult(consultId: string, userId: string, userRole: string): Promise<Consult> {
     const consult = await this.validateConsultOwnership(consultId, userId, userRole);
     
     //Only admins can delete consults
