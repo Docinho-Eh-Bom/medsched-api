@@ -1,6 +1,6 @@
 import { userRoleValidation } from "../schema/users-schema";
 import { UserRepository } from "../repositories/user-repository";
-import { User, UserRole } from "../models/user";
+import { User, UserRole } from "../models/User";
 import { BadRequestError } from "../errors/bad-request-error";
 import { NotFoundError } from "../errors/not-found-error";
 import { ConflictError } from "../errors/conflict-error";
