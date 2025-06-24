@@ -7,6 +7,7 @@ import { asyncHandler } from "../middlewares/asyncHandles";
 const router = Router();
 const controller = new AuthController();
 
+//login and register routes
 router.post("/login",
     validate({body: loginSchema}), 
     asyncHandler(controller.login.bind(controller)));
