@@ -8,7 +8,7 @@ type ValidateSchemas = {
 };
 
 export const validate = (schemas: ValidateSchemas) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
         try{
             if(schemas.body) req.body = schemas.body.parse(req.body);
             if(schemas.query) req.query = schemas.query.parse(req.query);
@@ -16,9 +16,11 @@ export const validate = (schemas: ValidateSchemas) => {
             next();
         }catch (error) {
             if (error instanceof Error) {
-                return res.status(400).json({ error: error.message });
+                res.status(400).json({ error: error.message });
+                return;
             }
-            return res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ error: "Internal server error" });
+            return;
         }
     };
 };
