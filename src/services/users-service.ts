@@ -1,6 +1,6 @@
 import { userRoleValidation } from "../schema/users-schema";
 import { UserRepository } from "../repositories/users-repository";
-import { User, UserRole } from "../models/User";
+import { User, UserRole } from "../models/user";
 import { BadRequestError } from "../errors/bad-request-error";
 import { NotFoundError } from "../errors/not-found-error";
 import { ConflictError } from "../errors/conflict-error";
@@ -181,6 +181,19 @@ export class UserService{
         }
 
         const users = await this.userRepository.listByRole(role);
+        return users.map(user => {
+            const { password, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        });
+    }
+
+    //list all users (admins only)
+    async listAll(requesterRole: UserRole): Promise<Omit<User, 'password'>[]> {
+        if (requesterRole !== 'admin') {
+            throw new UnauthorizedError("You don't have permission to list all users.");
+        }
+
+        const users = await this.userRepository.listAll();
         return users.map(user => {
             const { password, ...userWithoutPassword } = user;
             return userWithoutPassword;
