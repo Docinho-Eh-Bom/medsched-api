@@ -1,4 +1,4 @@
-export type ConsultStatus = 'scheduled' | 'completed' | 'cancelled';
+export type ConsultStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
 
 export type Consult = {
     id: string;
