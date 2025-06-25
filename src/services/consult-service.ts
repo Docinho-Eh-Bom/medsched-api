@@ -49,7 +49,7 @@ export class ConsultService{
     const consult = await this.consultRepository.create({
         ...data,
         patientId,
-        status: 'scheduled'
+        status: 'SCHEDULED'
     });
 
     return consult;
@@ -86,7 +86,7 @@ export class ConsultService{
             throw new UnauthorizedError("You don't have permission to update this consult.");
         }
         //if it was already completed or cancelled it can't be updated
-        if(consult.status === 'completed' || consult.status === 'cancelled') {
+        if(consult.status === 'COMPLETED' || consult.status === 'CANCELLED') {
             throw new ConflictError("Consult is already completed or canceled.");
         }
 

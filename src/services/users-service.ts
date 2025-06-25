@@ -1,12 +1,13 @@
 import { userRoleValidation } from "../schema/users-schema";
 import { UserRepository } from "../repositories/users-repository";
-import { User, UserRole } from "../models/user";
+import { MedicData, PatientData, User, UserRole } from "../models/user";
 import { BadRequestError } from "../errors/bad-request-error";
 import { NotFoundError } from "../errors/not-found-error";
 import { ConflictError } from "../errors/conflict-error";
 import { UnauthorizedError } from "../errors/unauthorized-error";
 import { hashPassword, comparePassword, generateToken  } from "../utils/jwt";
 import { z } from "zod";
+import { Medic } from "@prisma/client";
 
 type CreateUserData = z.infer<typeof userRoleValidation.createUserSchema>;
 type UpdateUserData = z.infer<typeof userRoleValidation.updateUserSchema>;
@@ -164,9 +165,59 @@ export class UserService{
         return userWithoutPassword;
     }
 
+    //get user by first name
+    async getUserByFirstName(firstName: string): Promise<Omit<User, 'password'>> {
+        const user = await this.userRepository.findByFirstName(firstName);
+        if (!user) {
+            throw new NotFoundError("User not found.");
+        }
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    //get user by last name
+    async getUserByLastName(lastName: string): Promise<Omit<User, 'password'>> {
+        const user = await this.userRepository.findByLastName(lastName);
+        if (!user) {
+            throw new NotFoundError("User not found.");
+        }
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
     //get user by email
     async getUserByEmail(email: string): Promise<Omit<User, 'password'>> {
         const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            throw new NotFoundError("User not found.");
+        }
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    //get user by cpf(patient only)
+    async getUserByCpf(cpf: string): Promise<Omit<User, 'password'>> {
+        const user = await this.userRepository.findByCpf(cpf);
+        if (!user) {
+            throw new NotFoundError("User not found.");
+        }
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    //get user by crm(medic only)
+    async getUserByCrm(crm: string): Promise<Omit<User, 'password'>> {
+        const user = await this.userRepository.findByCrm(crm);
+        if (!user) {
+            throw new NotFoundError("User not found.");
+        }
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    //get user by speciality(medic only)
+    async getUserBySpeciality(speciality: string): Promise<Omit<User, 'password'>> {
+        const user = await this.userRepository.findBySpeciality(speciality);
         if (!user) {
             throw new NotFoundError("User not found.");
         }
@@ -200,14 +251,55 @@ export class UserService{
         });
     }
 
+    //add available slot for medic
+    async addMedicAvailableSlot(medicId: string, slot: Date): Promise<MedicData> {
+        const medic = await this.userRepository.findById(medicId);
+        if (!medic || medic.role !== 'medic') {
+            throw new NotFoundError("Medic not found.");
+        }
+
+        if (!(slot instanceof Date) || isNaN(slot.getTime())) {
+            throw new BadRequestError("Invalid date format for available slot.");
+        }
+
+        const updatedMedic = await this.userRepository.addMedicAvailableSlot(medicId, slot);
+        return {
+        ...updatedMedic,
+        availableSlots: updatedMedic.availableSlots ?? [],
+        }; 
+    }
+
+
+    //get medic available slots
+    async getMedicAvailableSlots(medicId: string): Promise<Date[]> {
+        const medic = await this.userRepository.findById(medicId);
+        if (!medic || medic.role !== 'medic') {
+            throw new NotFoundError("Medic not found.");
+        }
+
+        const availableSlots = await this.userRepository.getMedicAvailableSlots(medicId);
+        return availableSlots;
+    }
+
     
+    //get patient data
+    async getPatientData(patientId: string): Promise<PatientData | null> {
+        const patient = await this.userRepository.getPatientData(patientId);
+        if (!patient) {
+            throw new NotFoundError("Patient not found.");
+        }
+        return patient;
+    }
 
 
-
-
-
-
-
+    //get medic data 
+    async getMedicData(medicId: string): Promise<MedicData | null> {
+        const medic = await this.userRepository.getMedicData(medicId);
+        if (!medic) {
+            throw new NotFoundError("Medic not found.");
+        }
+        return medic;
+    }
 
 }
 
