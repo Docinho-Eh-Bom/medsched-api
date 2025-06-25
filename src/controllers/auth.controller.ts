@@ -11,27 +11,14 @@ export class AuthController{
 
     //login
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const parsed = loginSchema.safeParse(req.body);
-        if (!parsed.success) {
-            res.status(400).json({ error: "Invalid login data", details: parsed.error.errors });
-            return;
-        }
-
-        const { email, password } = parsed.data;
-
+        const { email, password } = req.body;
         const result = await this.service.login(email, password);
         res.status(200).json(result);
     }
 
     //register
     async register(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const parsed = registerSchema.safeParse(req.body);
-        if (!parsed.success) {
-            res.status(400).json({ error: "Invalid registration data", details: parsed.error.errors });
-            return;
-        }
-
-        const result = await this.service.createUser(parsed.data);
+        const result = await this.service.createUser(req.body);
         res.status(201).json(result);
     }
 
