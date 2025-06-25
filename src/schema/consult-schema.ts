@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ConsultStatusSchema = z.enum(['scheduled', 'completed', 'cancelled']);
+export const ConsultStatusSchema = z.enum(['SCHEDULED', 'COMPLETED', 'CANCELLED']);
 export type ConsultStatus = z.infer<typeof ConsultStatusSchema>;
 
 export const ConsultSchema = z.object({
