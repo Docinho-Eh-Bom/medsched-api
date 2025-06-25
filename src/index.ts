@@ -26,7 +26,7 @@ app.use("/users", usersRoutes);
 
 app.get("/", (req: Request, res: Response) => {
     res.json({
-        message: "Welcome to the API",});
+        message: "Welcome to the MedSched API",});
 });
 
 app.listen(port, () => {

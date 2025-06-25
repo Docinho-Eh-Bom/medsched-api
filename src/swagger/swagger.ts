@@ -5,9 +5,9 @@ import { Express } from 'express';
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Schedule API',
+    title: 'MedSched API',
     version: '1.0.0',
-    description: 'Documentação da API de agendamentos',
+    description: 'Documentação da API de agendamentos médicos',
   },
   servers: [
     {
@@ -16,6 +16,7 @@ const swaggerDefinition = {
     },
   ],
 };
+
 
 const options = {
   swaggerDefinition,
@@ -28,5 +29,5 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 export function setupSwagger(app: Express) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/medsched-api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
