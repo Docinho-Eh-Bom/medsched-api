@@ -106,6 +106,15 @@ export class ConsultService{
         const consults = await this.consultRepository.listByStatus(status);
         return consults;
     }
+
+    //list all consults
+    async listAll(userId: string, userRole: string): Promise<Consult[]> {
+        if(userRole !== 'admin') {
+            throw new UnauthorizedError("You don't have permission to list all consults.");
+        }
+        const consults = await this.consultRepository.listAll();
+        return consults;
+    }
     
     //add notes to consult
     async addNotes(consultId: string, notes: string, userId: string, userRole: string): Promise<Consult> {
