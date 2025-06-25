@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ConsultService } from "../services/consult-service";
+import { ConsultStatus } from "../schema/consult-schema";
 import { CreateConsultSchema, UpdateConsultStatusSchema } from "../schema/consult-schema";
 
 export class ConsultController {
@@ -41,7 +42,7 @@ export class ConsultController {
     }
 
     //update consult status
-    async UpdateConsultStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async updateConsultStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.id;
         const parseResult = UpdateConsultStatusSchema.safeParse(req.body);
 
@@ -164,6 +165,61 @@ export class ConsultController {
 
         res.status(200).json({
             message: "Consults retrieved successfully",
+            consults,
+        });
+    }
+
+    //list all consults
+    async listAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+        if (!req.user?.userId || !req.user?.role) {
+            res.status(401).json({
+                message: "Unauthorized: Missing user credentials.",
+            });
+            return;
+        }
+
+        const consults = await this.consultService.listAll(req.user.userId, req.user.role);
+        if (consults.length === 0) {
+            res.status(404).json({
+                message: "No consults found",
+            });
+            return;
+        }
+
+        res.status(200).json({
+            message: "Consults retrieved successfully",
+            consults,
+        });
+    }
+
+    //list consults by status
+    async listByStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const status = req.params.status as ConsultStatus;
+
+        if (!req.user?.userId || !req.user?.role) {
+            res.status(401).json({
+                message: "Unauthorized: Missing user credentials.",
+            });
+            return;
+        }
+
+        if (req.user.role !== 'admin') {
+            res.status(403).json({
+                message: "Forbidden: Only admins can list consults by status.",
+            });
+            return;
+        }
+
+        const consults = await this.consultService.listByStatus(status, req.user.userId, req.user.role);
+        if (consults.length === 0) {
+            res.status(404).json({
+                message: `No consults found with status ${status}`,
+            });
+            return;
+        }
+
+        res.status(200).json({
+            message: `Consults with status ${status} retrieved successfully`,
             consults,
         });
     }

@@ -11,16 +11,7 @@ export class UsersController {
     }
     //create user
     async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const parseResult = userRoleValidation.createUserSchema.safeParse(req.body);
-        if (!parseResult.success) {
-            res.status(400).json({
-                message: "Invalid request data",
-                errors: parseResult.error.errors,
-            });
-            return;
-        }
-
-        const createdUser = await this.userService.createUser(parseResult.data);
+        const createdUser = await this.userService.createUser(req.body);
         if (!createdUser) {
             res.status(500).json({
                 message: "Failed to create user",
@@ -37,15 +28,6 @@ export class UsersController {
     //update user
     async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.id;
-        const parseResult = userRoleValidation.updateUserSchema.safeParse(req.body);
-
-        if (!parseResult.success) {
-            res.status(400).json({
-                message: "Invalid request data",
-                errors: parseResult.error.errors,
-            });
-            return;
-        }
 
         if (!req.user?.userId || !req.user?.role) {
             res.status(401).json({
@@ -53,7 +35,15 @@ export class UsersController {
             });
             return;
         }
-        const updatedUser = await this.userService.updateUser(id, parseResult.data, req.user.userId, req.user.role);
+        const updatedUser = await this.userService.updateUser(id, req.body.data, req.user.userId, req.user.role);
+
+        if (!updatedUser) {
+            res.status(404).json({
+                message: "User not found or update failed",
+            });
+            return;
+        }
+
         res.status(200).json({
             message: "User updated successfully",
             user: updatedUser,
@@ -110,6 +100,22 @@ export class UsersController {
         }
 
         const users = await this.userService.listByRole(parsedRole.data, req.user.role);
+        res.status(200).json({
+            message: "Users retrieved successfully",
+            users,
+        });
+    }
+
+    //lis all users (admins only)
+    async listAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+        if (!req.user?.role || req.user.role !== 'admin') {
+            res.status(403).json({
+                message: "Forbidden: You don't have permission to list all users.",
+            });
+            return;
+        }
+
+        const users = await this.userService.listAll(req.user.role);
         res.status(200).json({
             message: "Users retrieved successfully",
             users,
