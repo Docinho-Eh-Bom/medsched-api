@@ -1,4 +1,4 @@
-import { UserRole, User, MedicData, PatientData} from "../models/User";
+import { UserRole, User, MedicData, PatientData} from "../models/user";
 
 export interface UserRepositoryInterface{
     create(user: Omit<User, 'id'>): Promise<User>;
@@ -12,6 +12,7 @@ export interface UserRepositoryInterface{
     findByCrm(crm: string): Promise<User | null>;
     findBySpeciality(speciality: string): Promise<User | null>;
     listByRole(role: UserRole): Promise<User[]>;
+    listAll(): Promise<User[]>;
     addMedicAvailableSlot(medicId: string, slot: Date): Promise<MedicData>;
     getMedicAvailableSlots(medicId: string): Promise<Date[]>;
     getPatientData(patientId: string): Promise<PatientData | null>;
