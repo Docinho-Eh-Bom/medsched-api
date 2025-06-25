@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const ConsultStatusSchema = z.enum(['scheduled', 'completed', 'cancelled']);
+export type ConsultStatus = z.infer<typeof ConsultStatusSchema>;
 
 export const ConsultSchema = z.object({
     id: z.string().uuid("Consult IS must be a valid UUID"),
