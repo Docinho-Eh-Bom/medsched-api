@@ -12,7 +12,7 @@ export class ConsultRepository implements ConsultRepositoryInterface{
         const newConsult = await prisma.consult.create({
             data: {
                 date: consult.date,
-                status: consult.status,
+                status: 'SCHEDULED',
                 notes: consult.notes,
                 patientId: consult.patientId,
                 medicId: consult.medicId
@@ -22,7 +22,7 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     }
 
     //find consult by id    
-    async findById(id: String): Promise<Consult | null> {
+    async findById(id: string): Promise<Consult | null> {
         try{
             const consult = await prisma.consult.findUnique({
             where: { id }
@@ -98,6 +98,19 @@ export class ConsultRepository implements ConsultRepositoryInterface{
         }
     }
 
+    //list all consults
+    async listAll(): Promise<Consult[]> {
+        try{
+            const consults = await prisma.consult.findMany({
+            orderBy: { date: 'asc' }
+        });
+        return consults as Consult[];
+        }catch(error) {
+            throw new NotFoundError("Could not retrieve consults.");
+            return [];
+        }
+    }
+    
     //list consults by status
     async listByStatus(status: ConsultStatus): Promise<Consult[]> {
         try{
