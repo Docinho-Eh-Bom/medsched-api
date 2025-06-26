@@ -7,7 +7,7 @@ import { ConflictError } from "../errors/conflict-error";
 import { UnauthorizedError } from "../errors/unauthorized-error";
 import { hashPassword, comparePassword, generateToken  } from "../utils/jwt";
 import { z } from "zod";
-import { Medic } from "@prisma/client";
+
 
 type CreateUserData = z.infer<typeof userRoleValidation.createUserSchema>;
 type UpdateUserData = z.infer<typeof userRoleValidation.updateUserSchema>;
@@ -78,8 +78,11 @@ export class UserService{
     }
 
     //user data update
-    async updateUser(userId: string, data: UpdateUserData, requestId: string, requestRole: UserRole): Promise<Omit<User, 'password'>>{
-        if(requestId !== userId && requestRole !== 'admin') {
+    async updateUser(userId: string, data: UpdateUserData, requestUserId: string, requestRole: UserRole): Promise<Omit<User, 'password'>>{
+                console.log(
+            data, data.patientData, requestUserId, requestRole, userId, data.email, data.password
+        );
+        if(requestUserId !== userId && requestRole !== 'admin') {
             throw new UnauthorizedError("You don't have permission to update this user.");
         }
 
@@ -99,29 +102,37 @@ export class UserService{
             data.password = await hashPassword(data.password);
         }
 
-        //fields necessary for medic and patient roles verification
         let medicData = undefined;
-        if (data.medicData) {
-            if (typeof data.medicData.speciality !== "string" || typeof data.medicData.crm !== "string") {
-                throw new BadRequestError("Medic speciality and crm are required.");
+        let patientData = undefined;
+
+        //flexible fields for medic and patient roles verification and update
+        if(user.role === 'medic'){
+            let medicData = user.medicData;
+            if (data.medicData) {
+                if ((typeof data.medicData.speciality !== "string" && data.medicData.speciality !== undefined)
+                    || (typeof data.medicData.crm !== "string" && data.medicData.crm !== undefined)) {
+                    throw new BadRequestError("Medic speciality and crm must be strings if provided.");
+                }
+                medicData = {
+                    ...user.medicData,
+                    ...data.medicData,
+                    availableSlots: data.medicData?.availableSlots ?? user.medicData?.availableSlots ?? []
+                }
             }
-            medicData = {
-                speciality: data.medicData.speciality,
-                crm: data.medicData.crm,
-                availableSlots: data.medicData.availableSlots ?? []
-            };
         }
 
-        let patientData = undefined;
-        if (data.patientData) {
-            if (typeof data.patientData.cpf !== "string" || typeof data.patientData.cellphone !== "string" || !(data.patientData.birthDate instanceof Date)) {
-                throw new BadRequestError("Patient cpf, cellphone, and birthDate are required.");
+        if(user.role === 'patient'){
+            let patientData = user.patientData;
+            if (data.patientData) {
+                if ((typeof data.patientData.cpf !== "string" && data.patientData.cpf !== undefined) 
+                    || (typeof data.patientData.cellphone !== "string" && data.patientData.cellphone !== undefined)) {
+                    throw new BadRequestError("Patient cpf, cellphone, and birthDate must be valid if provided.");
+                }
+                patientData = {
+                    ...user.patientData,
+                    ...data.patientData
+                };
             }
-            patientData = {
-                cpf: data.patientData.cpf,
-                cellphone: data.patientData.cellphone,
-                birthDate: data.patientData.birthDate
-            };
         }
 
         const updateData = {
@@ -136,8 +147,8 @@ export class UserService{
     }
 
     //delete user by id
-    async deleteUser(userId: string, requestId: string, requestRole: UserRole): Promise<Omit<User, 'password'>> {
-        if (requestId !== userId && requestRole !== 'admin') {
+    async deleteUser(userId: string, requestUserId: string, requestRole: UserRole): Promise<Omit<User, 'password'>> {
+        if (requestUserId !== userId && requestRole !== 'admin') {
             throw new UnauthorizedError("You don't have permission to delete this user.");
         }
 
@@ -258,11 +269,13 @@ export class UserService{
             throw new NotFoundError("Medic not found.");
         }
 
-        if (!(slot instanceof Date) || isNaN(slot.getTime())) {
+        const slotDate = new Date(slot);
+
+        if (isNaN(slotDate.getTime())) {
             throw new BadRequestError("Invalid date format for available slot.");
         }
 
-        const updatedMedic = await this.userRepository.addMedicAvailableSlot(medicId, slot);
+        const updatedMedic = await this.userRepository.addMedicAvailableSlot(medicId, slotDate);
         return {
         ...updatedMedic,
         availableSlots: updatedMedic.availableSlots ?? [],

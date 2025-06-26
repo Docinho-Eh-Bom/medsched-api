@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole, Prisma } from "@prisma/client";
 import { User, MedicData, PatientData } from "../models/user";
 import { UserRepositoryInterface } from "./users-repository.interface";
 import { NotFoundError } from "../errors/not-found-error";
@@ -111,9 +111,21 @@ export class UserRepository implements UserRepositoryInterface{
         }
     }
 
-    //delete user by id
+    //delete user by id (have to delete everything related to user, or else it will throw an error)
     async delete(userId: string): Promise<User | null> {
-        try {
+        try { 
+            await prisma.availableSlot.deleteMany({
+                where: { medic: { userId } }
+            });
+
+            await prisma.medic.deleteMany({
+                where: { userId } 
+            });
+
+            await prisma.patient.deleteMany({
+                where: { userId }
+            });
+
             const deletedUser = await prisma.user.delete({
                 where: { id: userId },
                 include: {
@@ -123,8 +135,12 @@ export class UserRepository implements UserRepositoryInterface{
             });
             return mapPrismaToUser(deletedUser);
         } catch (error) {
+            if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new NotFoundError("User not found.");
+            }
+            console.error("Error deleting user:", error);
         }
+        return null;
     }
     
     //find user by id 
@@ -310,7 +326,7 @@ export class UserRepository implements UserRepositoryInterface{
             })
 
         const medic = await prisma.medic.findUnique({
-            where: { id: medicId },
+            where: { userId: medicId },
             include: { availableSlots: true }
         });
 
@@ -323,6 +339,7 @@ export class UserRepository implements UserRepositoryInterface{
         }
 
         }catch(error) {
+            console.log(error);
             throw new BadRequestError("Could not add available slot for the medic.");
         }
     }
@@ -345,7 +362,7 @@ export class UserRepository implements UserRepositoryInterface{
     async getPatientData(patientId: string): Promise<PatientData | null> {
         try{
         const patient = await prisma.patient.findUnique({
-            where: { id: patientId },
+            where: { userId: patientId },
         });
 
         if(!patient) return null;
@@ -364,7 +381,7 @@ export class UserRepository implements UserRepositoryInterface{
     async getMedicData(medicId: string): Promise<MedicData | null> {
         try{
             const medic = await prisma.medic.findUnique({
-            where: { id: medicId },
+            where: { userId: medicId },
             include: { availableSlots: true }
         });
 
