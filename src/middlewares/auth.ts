@@ -16,7 +16,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
     try {
     const payload = jwt.verify(token, secret) as JwtPayload;
     req.user = {
-        userId: payload.id,
+        userId: payload.userId,
         role: payload.role
     };
     next();
