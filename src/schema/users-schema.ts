@@ -35,6 +35,10 @@ export const medicDataSchema =z.object({
 export const userRoleSchema = z.enum(["admin", "patient", "medic"]);
 export type UserRole = z.infer<typeof userRoleSchema>;
 
+//for updates
+const patientDataUpdateSchema = patientDataSchema.omit({ birthDate: true }).partial();
+const medicDataUpdateSchema = medicDataSchema.partial();
+
 export const userRoleValidation = {
   createUserSchema: z.discriminatedUnion("role", [
       baseUserSchema.extend({
@@ -52,8 +56,8 @@ export const userRoleValidation = {
 
   updateUserSchema: baseUserSchema.partial().extend({
     role: z.enum(["admin", "patient", "medic"]).optional(),
-    patientData: patientDataSchema.partial().optional(),
-    medicData: medicDataSchema.partial().optional(),
+    patientData: patientDataUpdateSchema.optional(),
+    medicData: medicDataUpdateSchema.optional(),
   }),
 
   addMedicSlot: z.object({
