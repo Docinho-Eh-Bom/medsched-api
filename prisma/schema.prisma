@@ -39,8 +39,7 @@ model User{
 
 //model for patients
 model Patient{
-    id        String     @id @default(uuid())
-    userId    String     @unique
+    userId    String     @id
     user      User       @relation(fields: [userId], references: [id])
     cpf       String        @unique
     cellphone String? @unique
@@ -51,8 +50,7 @@ model Patient{
 
 //model for medics
 model Medic{
-    id        String     @id @default(uuid())
-    userId    String     @unique
+    userId    String     @id
     user      User       @relation(fields: [userId], references: [id])
     speciality String
     crm       String        @unique
@@ -65,7 +63,7 @@ model Medic{
 model AvailableSlot {
     id        String   @id @default(uuid())
     date      DateTime
-    medic     Medic    @relation(fields: [medicId], references: [id])
+    medic     Medic    @relation(fields: [medicId], references: [userId])
     medicId   String
 }
 
@@ -82,7 +80,7 @@ model Consult{
     //relationships
     medicId         String
     medic           User           @relation("ConsultsAsMedic", fields: [medicId], references: [id])
-  
+
     patientId       String
     patient         User           @relation("ConsultsAsPatient", fields: [patientId], references: [id])
 }
