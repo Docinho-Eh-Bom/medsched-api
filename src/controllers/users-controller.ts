@@ -27,7 +27,13 @@ export class UsersController {
 
     //update user
     async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const id = req.params.id;
+        const id = req.params.userId;
+        if (!id) {
+            res.status(400).json({
+                message: "Invalid request: User ID is required.",
+            });
+            return;
+        }        
 
         if (!req.user?.userId || !req.user?.role) {
             res.status(401).json({
@@ -35,7 +41,15 @@ export class UsersController {
             });
             return;
         }
-        const updatedUser = await this.userService.updateUser(id, req.body.data, req.user.userId, req.user.role);
+
+        if (req.user.role !== 'admin' && req.user.userId !== id) {
+            res.status(403).json({
+                message: "Forbidden: You don't have permission to update this user.",
+            });
+            return;
+        }
+
+        const updatedUser = await this.userService.updateUser(id, req.body, req.user.userId, req.user.role);
 
         if (!updatedUser) {
             res.status(404).json({
@@ -122,9 +136,75 @@ export class UsersController {
         });
     }
 
+    //add medic slot
+    async addMedicSlot(req: Request, res: Response, next: NextFunction): Promise<void> {
+        console.log(req.body);
+        const medicId = req.params.userId;
+        console.log("MedicId:", medicId);
+
+        if (!medicId) {
+            res.status(400).json({
+                message: "Invalid request: User ID is required.",
+            });
+            return;
+        }
+
+        if (!req.user || (req.user.role !== 'admin' && req.user.userId !== medicId)){
+            res.status(403).json({
+                message: "Forbidden: You don't have permission to add slots for this medic.",
+            });
+            return;
+        }
+
+        const slotData = req.body;
+        const addedSlot = await this.userService.addMedicAvailableSlot(medicId, slotData.slot);
+        if (!addedSlot) {
+            res.status(500).json({
+                message: "Failed to add medic slot",
+            });
+            return;
+        }
+
+        res.status(201).json({
+            message: "Medic slot added successfully",
+            slot: addedSlot,
+        });
+    }
+
+    //get medic slots
+    async getMedicSlots(req: Request, res: Response, next: NextFunction): Promise<void>{
+        const medicId = req.params.userId;
+        if (!medicId) {
+            res.status(400).json({
+                message: "Invalid request: User ID is required.",
+            });
+            return;
+        }
+        
+        if (!req.user || (req.user.role !== 'admin' && req.user.userId !== medicId)){
+            res.status(403).json({
+                message: "Forbidden: You don't have permission to  access medic slots.",
+            });
+            return;
+        }
+
+        const slots = await this.userService.getMedicAvailableSlots(medicId);
+        if (!slots || slots.length === 0) {
+            res.status(404).json({
+                message: "No slots found for the specified medic.",
+            });
+            return;
+        }
+
+        res.status(200).json({
+            message: "Medic slots retrieved successfully",
+            slots,
+        });
+    }
+
     //delete user
     async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const id = req.params.id;
+        const id = req.params.userId;
         if (!id) {
             res.status(400).json({
                 message: "Invalid request: User ID is required.",
@@ -135,6 +215,13 @@ export class UsersController {
         if (!req.user?.userId || !req.user?.role) {
             res.status(401).json({
                 message: "Unauthorized: Missing user credentials.",
+            });
+        return;
+        }
+
+        if (req.user.role !== 'admin' && req.user.userId !== id) {
+            res.status(403).json({
+                message: "Forbidden: You don't have permission to delete this user.",
             });
             return;
         }

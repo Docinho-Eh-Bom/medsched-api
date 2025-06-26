@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/users-service";
-import { loginSchema, registerSchema } from "../schema/auth-schema";
 
 export class AuthController{
     private service: UserService;
