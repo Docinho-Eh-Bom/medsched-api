@@ -126,7 +126,7 @@ export class UserService{
             if (data.patientData) {
                 if ((typeof data.patientData.cpf !== "string" && data.patientData.cpf !== undefined) 
                     || (typeof data.patientData.cellphone !== "string" && data.patientData.cellphone !== undefined)) {
-                    throw new BadRequestError("Patient cpf, cellphone, and birthDate must be valid if provided.");
+                    throw new BadRequestError("Patient cpf and cellphone, must be valid if provided.");
                 }
                 patientData = {
                     ...user.patientData,
