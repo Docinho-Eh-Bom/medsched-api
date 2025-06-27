@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "prisma_tables": "npx prisma studio",
-    "swagger:generate": "ts-node generate-swagger.ts"
+    "swagger:generate": "npm run build && node dist/swagger/generate-swagger.js"
   },
   "keywords": [],
   "author": "Alessandra Freitas Pacheco",

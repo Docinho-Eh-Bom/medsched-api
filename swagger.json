@@ -1,0 +1,1160 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MedSched API",
+    "version": "1.0.0",
+    "description": "Documentação da API de agendamentos médicos feita para as disciplinas de Serviços Web e Desenvolvimento Mobile 2."
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid request"
+          },
+          "error": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Invalid email format",
+              "Password too short"
+            ]
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "genoveva@email.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};':\"\\\\|,.<>/?]).+$",
+            "example": "12345+A"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Fulano"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 50,
+            "example": "Silveira"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "fulano@gmail.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin"
+            ]
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "AdminRegister": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Fulano"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 50,
+            "example": "Silveira"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "fulano@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};':\"\\\\|,.<>/?]).+$",
+            "example": "FULANO1+"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin"
+            ]
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "PatientRegister": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Ciclano"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 50,
+            "example": "Souza"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ciclano@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};':\"\\\\|,.<>/?]).+$",
+            "example": "CICLANO1+"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "patient"
+            ]
+          },
+          "patientData": {
+            "type": "object",
+            "properties": {
+              "cpf": {
+                "type": "string",
+                "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$",
+                "example": "123.456.789-00"
+              },
+              "cellphone": {
+                "type": "string",
+                "pattern": "^\\d{2}-\\d{5}-\\d{4}$",
+                "example": "51-34567-8901"
+              },
+              "birthDate": {
+                "type": "string",
+                "format": "date",
+                "example": "1990-01-01"
+              }
+            },
+            "required": [
+              "cpf",
+              "cellphone",
+              "birthDate"
+            ]
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "role",
+          "patientData"
+        ]
+      },
+      "MedicRegister": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Beltrano"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 50,
+            "example": "Santos"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "beltrano@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};':\"\\\\|,.<>/?]).+$",
+            "example": "BELTRANO1+"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "medic"
+            ]
+          },
+          "medicData": {
+            "type": "object",
+            "properties": {
+              "speciality": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 85,
+                "example": "Cardiologia"
+              },
+              "crm": {
+                "type": "string",
+                "pattern": "^\\d{6}-\\d{2}/[A-Z]{2}$",
+                "example": "123456-78/RS"
+              },
+              "availableSlots": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2023-10-01T10:00:00Z"
+                }
+              }
+            },
+            "required": [
+              "speciality",
+              "crm"
+            ]
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "role",
+          "medicData"
+        ]
+      },
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Deltrana"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 50,
+            "example": "Santiago"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "deltrana@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 20,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};':\"\\\\|,.<>/?]).+$",
+            "example": "DELTRANA+1"
+          },
+          "patientData": {
+            "ref": "#/components/schemas/PatientDataUpdate"
+          },
+          "medicData": {
+            "ref": "#/components/schemas/MedicDataUpdate"
+          }
+        }
+      },
+      "PatientDataUpdate": {
+        "type": "object",
+        "properties": {
+          "cpf": {
+            "type": "string",
+            "pattern": "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$",
+            "example": "852.963.147-01"
+          },
+          "cellphone": {
+            "type": "string",
+            "pattern": "^\\d{2}-\\d{5}-\\d{4}$",
+            "example": "51-34972-6204"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-02-01"
+          }
+        }
+      },
+      "MedicDataUpdate": {
+        "type": "object",
+        "properties": {
+          "speciality": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 85,
+            "example": "Neurologia"
+          },
+          "crm": {
+            "type": "string",
+            "pattern": "^\\d{6}-\\d{2}/[A-Z]{2}$",
+            "example": "963147-98/RS"
+          },
+          "availableSlots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-10-01T10:00:00Z"
+            }
+          }
+        }
+      },
+      "CreateConsult": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-10-01T10:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "COMPLETED",
+              "CANCELLED"
+            ],
+            "default": "SCHEDULED"
+          }
+        },
+        "required": [
+          "patientId",
+          "medicId",
+          "dateTime"
+        ]
+      },
+      "CancelConsult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "CANCELLED"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "AddNotesToTheConsult": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "example": "Paciente apresenta sintomas de gripe e febre."
+          }
+        },
+        "required": [
+          "notes"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., missing fields)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register user",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/AdminRegister"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PatientRegister"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MedicRegister"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., missing fields)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List all users",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only admins can access this endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/AdminRegister"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PatientRegister"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MedicRegister"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., validation errors)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only admins can access this endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "summary": "Get user by Id",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the user to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found user by Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid or missing Id/token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only admins and the user of that Id can access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user data",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the user to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only admins or the user themselves can perform this action",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the user to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid or missing user Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only admins or the user themselves can perform this action",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{medicId}/slots": {
+      "post": {
+        "summary": "Add a new available slot for a medic",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "medicId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the medic to add the slot for"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "slot": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-01T14:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Slot added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Slot created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., missing fields)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all available slots for a medic by their Id",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "medicId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the medic to get the slots for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available slots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-01T14:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., missing fields)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
