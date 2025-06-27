@@ -71,19 +71,19 @@ router.get("/",authenticate,
  *         description: Id of the user to retrieve
  *     responses:
  *       200:
- *         description: Found user by ID
+ *         description: Found user by Id
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Bad request - Invalid or missing ID/token
+ *         description: Bad request - Invalid or missing Id/token
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *       403:
- *         description: Forbidden - Only admins and the user of that ID can access
+ *         description: Forbidden - Only admins and the user of that Id can access
  *         content:
  *           application/json:
  *             schema:
@@ -382,7 +382,7 @@ router.patch("/:userId", authenticate,
  *                   type: string
  *                   example: "User deleted successfully"
  *       400:
- *         description: Bad request - Invalid or missing user ID
+ *         description: Bad request - Invalid or missing user Id
  *         content:
  *           application/json:
  *             schema:
