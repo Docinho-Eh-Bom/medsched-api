@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { asyncHandler } from "../middlewares/asyncHandles";
-import { ConsultController } from "../controllers/consult-controller";
-import { authenticate, authorize } from "../middlewares/auth";
-import { validate } from "../middlewares/validate";
-import { CreateConsultSchema, UpdateConsultStatusSchema, UpdateConsultNotesSchema } from "../schema/consult-schema";
+import { asyncHandler } from "../middlewares/asyncHandles.js";
+import { ConsultController } from "../controllers/consult-controller.js";
+import { authenticate, authorize } from "../middlewares/auth.js";
+import { validate } from "../middlewares/validate.js";
+import { CreateConsultSchema, UpdateConsultStatusSchema, UpdateConsultNotesSchema } from "../schema/consult-schema.js";
 
 const router = Router();
 const controller = new ConsultController();

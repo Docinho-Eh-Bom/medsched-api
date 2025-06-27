@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { ConsultService } from "../services/consult-service";
-import { ConsultStatus, CreateConsultSchema, UpdateConsultStatusSchema } from "../schema/consult-schema";
-import { APIError } from "../errors/api-error";
-import { sendSuccess } from "../utils/response";
+import { ConsultService } from "../services/consult-service.js";
+import { ConsultStatus, CreateConsultSchema, UpdateConsultStatusSchema } from "../schema/consult-schema.js";
+import { APIError } from "../errors/api-error.js";
+import { sendSuccess } from "../utils/response.js";
 import { send } from "process";
 
 export class ConsultController {

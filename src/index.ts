@@ -1,13 +1,13 @@
-import { env } from './config/env';
+import { env } from './config/env.js';
 import express from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
-import { setupSwagger } from './swagger/swagger';
+import { setupSwagger } from './swagger/swagger.js';
 import { Request, Response } from 'express';
-import { errorHandler } from './middlewares/error-handler';
-import { authRoutes } from './routes/auth-routes';
-import { consultRoutes } from './routes/consult-routes';
-import { usersRoutes } from './routes/users-routes';
+import { errorHandler } from './middlewares/error-handler.js';
+import { authRoutes } from './routes/auth-routes.js';
+import { consultRoutes } from './routes/consult-routes.js';
+import { usersRoutes } from './routes/users-routes.js';
 
 //swagger setup
 
@@ -23,14 +23,6 @@ setupSwagger(app);
 app.use("/auth", authRoutes);
 app.use("/consults", consultRoutes);
 app.use("/users", usersRoutes);
-
-app.use((req, res) => {
-    res.status(404).json({
-        message: "Route not found",
-        statusCode: 404,
-        errors: null
-    });
-})
 
 app.get("/", (req: Request, res: Response) => {
     res.json({

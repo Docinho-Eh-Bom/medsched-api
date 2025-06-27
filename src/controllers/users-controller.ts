@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { UserService } from "../services/users-service";
-import {  userRoleSchema } from "../schema/users-schema";
-import { APIError } from "../errors/api-error";
-import { sendSuccess } from "../utils/response";
-import { send } from "process";
+import { UserService } from "../services/users-service.js";
+import {  userRoleSchema } from "../schema/users-schema.js";
+import { APIError } from "../errors/api-error.js";
+import { sendSuccess } from "../utils/response.js";
 
 export class UsersController {
 

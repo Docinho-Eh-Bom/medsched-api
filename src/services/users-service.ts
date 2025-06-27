@@ -1,11 +1,11 @@
-import { userRoleValidation } from "../schema/users-schema";
-import { UserRepository } from "../repositories/users-repository";
-import { MedicData, PatientData, User, UserRole } from "../models/user";
-import { BadRequestError } from "../errors/bad-request-error";
-import { NotFoundError } from "../errors/not-found-error";
-import { ConflictError } from "../errors/conflict-error";
-import { UnauthorizedError } from "../errors/unauthorized-error";
-import { hashPassword, comparePassword, generateToken  } from "../utils/jwt";
+import { userRoleValidation } from "../schema/users-schema.js";
+import { UserRepository } from "../repositories/users-repository.js";
+import { MedicData, PatientData, User, UserRole } from "../models/user.js";
+import { BadRequestError } from "../errors/bad-request-error.js";
+import { NotFoundError } from "../errors/not-found-error.js";
+import { ConflictError } from "../errors/conflict-error.js";
+import { UnauthorizedError } from "../errors/unauthorized-error.js";
+import { hashPassword, comparePassword, generateToken  } from "../utils/jwt.js";
 import { z } from "zod";
 
 

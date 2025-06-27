@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { UnauthorizedError } from "../errors/unauthorized-error";
+import { UnauthorizedError } from "../errors/unauthorized-error.js";
 import dotenv from 'dotenv';
-import { UserRole } from "../models/user";
+import { UserRole } from "../models/user.js";
 
 dotenv.config();
 

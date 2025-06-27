@@ -1,4 +1,4 @@
-import { UserRole, User, MedicData, PatientData} from "../models/user";
+import { UserRole, User, MedicData, PatientData} from "../models/user.js";
 
 export interface UserRepositoryInterface{
     create(user: Omit<User, 'id'>): Promise<User>;

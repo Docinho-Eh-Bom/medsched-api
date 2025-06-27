@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { baseUserSchema } from './users-schema';
-import { medicDataSchema, patientDataSchema } from './users-schema';
+import { baseUserSchema } from './users-schema.js';
+import { medicDataSchema, patientDataSchema } from './users-schema.js';
 
 //recycling baseSchema schemas for the auth 
 export const loginSchema = baseUserSchema.pick({

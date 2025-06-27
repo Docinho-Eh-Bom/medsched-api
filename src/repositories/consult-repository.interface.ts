@@ -1,4 +1,4 @@
-import { Consult, ConsultStatus } from "../models/consult";
+import { Consult, ConsultStatus } from "../models/consult.js";
 
 export interface ConsultRepositoryInterface {
     create(consult: Omit<Consult, 'id' | 'createdAt' | 'updatedAt'>): Promise<Consult>;

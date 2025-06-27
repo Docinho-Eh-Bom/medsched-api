@@ -1,10 +1,10 @@
-import { asyncHandler } from './../middlewares/asyncHandles';
+import { asyncHandler } from './../middlewares/asyncHandles.js';
 import { Router } from "express";
-import { UsersController } from "../controllers/users-controller";
-import { validate } from "../middlewares/validate";
-import { authenticate, authorize } from "../middlewares/auth";
-import { registerSchema } from "../schema/auth-schema";
-import {  userRoleValidation } from "../schema/users-schema";
+import { UsersController } from "../controllers/users-controller.js";
+import { validate } from "../middlewares/validate.js";
+import { authenticate, authorize } from "../middlewares/auth.js";
+import { registerSchema } from "../schema/auth-schema.js";
+import {  userRoleValidation } from "../schema/users-schema.js";
 
 const router = Router();
 const controller = new UsersController();

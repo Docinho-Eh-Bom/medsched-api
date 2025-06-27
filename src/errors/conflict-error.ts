@@ -1,4 +1,4 @@
-import { APIError } from "./api-error";
+import { APIError } from "./api-error.js";
 
 export class ConflictError extends APIError {
    constructor(message: string) {

@@ -1,9 +1,9 @@
 import { PrismaClient, UserRole, Prisma } from "@prisma/client";
-import { User, MedicData, PatientData } from "../models/user";
-import { UserRepositoryInterface } from "./users-repository.interface";
-import { NotFoundError } from "../errors/not-found-error";
-import { BadRequestError } from "../errors/bad-request-error";
-import { mapPrismaToUser } from "../utils/mapPrismaToUser";
+import { User, MedicData, PatientData } from "../models/user.js";
+import { UserRepositoryInterface } from "./users-repository.interface.js";
+import { NotFoundError } from "../errors/not-found-error.js";
+import { BadRequestError } from "../errors/bad-request-error.js";
+import { mapPrismaToUser } from "../utils/mapPrismaToUser.js";
 
 const prisma = new PrismaClient();
 

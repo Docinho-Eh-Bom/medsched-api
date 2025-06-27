@@ -1,4 +1,4 @@
-import {User} from '../models/user';
+import {User} from '../models/user.js';
 
 export function mapPrismaToUser(user: any): User{
     const role = user.role.toLowerCase() as User['role'];

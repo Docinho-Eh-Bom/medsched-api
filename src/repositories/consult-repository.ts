@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { Consult, ConsultStatus } from "../models/consult";
-import { ConsultRepositoryInterface } from "./consult-repository.interface";
-import { NotFoundError } from "../errors/not-found-error";
-import { BadRequestError } from "../errors/bad-request-error";
+import { Consult, ConsultStatus } from "../models/consult.js";
+import { ConsultRepositoryInterface } from "./consult-repository.interface.js";
+import { NotFoundError } from "../errors/not-found-error.js";
+import { BadRequestError } from "../errors/bad-request-error.js";
 
 const prisma = new PrismaClient();
 

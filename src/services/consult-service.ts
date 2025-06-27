@@ -1,11 +1,11 @@
-import { CreateConsultSchema, UpdateConsultStatusSchema,  } from './../schema/consult-schema';
-import { ConsultRepository } from './../repositories/consult-repository';
-import { UserRepository } from '../repositories/users-repository';
-import { Consult, ConsultStatus } from "../models/consult";
-import { BadRequestError } from '../errors/bad-request-error';
-import { ConflictError } from '../errors/conflict-error';
-import { NotFoundError } from '../errors/not-found-error';
-import { UnauthorizedError } from '../errors/unauthorized-error';
+import { CreateConsultSchema, UpdateConsultStatusSchema,  } from './../schema/consult-schema.js';
+import { ConsultRepository } from './../repositories/consult-repository.js';
+import { UserRepository } from '../repositories/users-repository.js';
+import { Consult, ConsultStatus } from "../models/consult.js";
+import { BadRequestError } from '../errors/bad-request-error.js';
+import { ConflictError } from '../errors/conflict-error.js';
+import { NotFoundError } from '../errors/not-found-error.js';
+import { UnauthorizedError } from '../errors/unauthorized-error.js';
 import {z} from "zod";
 
 type CreateConsultData = z.infer<typeof CreateConsultSchema>;
