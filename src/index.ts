@@ -1,3 +1,4 @@
+import { env } from './config/env';
 import express from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -13,22 +14,31 @@ import { usersRoutes } from './routes/users-routes';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = env.PORT || 3000;
 
 
 app.use(helmet());
 app.use(express.json());
-app.use(errorHandler);
 setupSwagger(app);
 app.use("/auth", authRoutes);
 app.use("/consults", consultRoutes);
 app.use("/users", usersRoutes);
+
+app.use((req, res) => {
+    res.status(404).json({
+        message: "Route not found",
+        statusCode: 404,
+        errors: null
+    });
+})
 
 app.get("/", (req: Request, res: Response) => {
     res.json({
         message: "Welcome to the MedSched API",});
 });
 
+app.use(errorHandler);
+
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`MedSched API running in http://localhost:${port}`);
 });
