@@ -9,7 +9,7 @@ const options = {
     info: {
       title: 'MedSched API',
       version: '1.0.0',
-      description: 'Documentação da API de agendamentos médicos',
+      description: 'Documentação da API de agendamentos médicos feita para as disciplinas de Serviços Web e Desenvolvimento Mobile 2.'
     },
     components,
     servers: [
