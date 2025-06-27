@@ -25,6 +25,7 @@ const options = {
 };
 
 const swaggerSpec = swaggerJSDoc(options);
+export default swaggerSpec;
 
 export function setupSwagger(app: Express) {
   app.use('/medsched-api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
