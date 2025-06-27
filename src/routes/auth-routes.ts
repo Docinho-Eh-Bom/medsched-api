@@ -8,42 +8,22 @@ const router = Router();
 const controller = new AuthController();
 
 //login and register routes
-
 /**
- * @openapi
- * tags:
- *   - name: Auth
- *     description: Rotas de autenticação e registro
- */
-
-/**
- * @openapi
+ * @swagger
  * /auth/login:
  *   post:
- *     tags:
- *       - Auth
- *     summary: Login de usuário
- *     description: Faz login com email e senha, retorna token JWT.
+ *     summary: Login user
+ *     tags: 
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "genoveva@email.com"
- *               password:
- *                 type: string
- *                 example: "12345+A"
+ *             $ref: '#/components/schemas/Login'
  *     responses:
  *       200:
- *         description: Login bem-sucedido com token JWT.
+ *         description: User logged in successfully
  *         content:
  *           application/json:
  *             schema:
@@ -51,110 +31,81 @@ const controller = new AuthController();
  *               properties:
  *                 token:
  *                   type: string
- *                   description: Token JWT para autenticação.
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
- *         description: "Requisição inválida (ex: dados incompletos)."
+ *         description: Bad Request (e.g., missing fields)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
- *         description: "Credenciais inválidas."
+ *         description: Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/login",
     validate({body: loginSchema}), 
     asyncHandler(controller.login.bind(controller)));
 
-
-
 /**
- * @openapi
- * /auth/register/admin:
- *   post:
- *     tags:
- *       - Auth
- *     summary: Registro de administrador
- *     description: Cria um novo usuário com o papel `admin`.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/AdminRegister'
- *     responses:
- *       201:
- *         description: Usuário admin criado com sucesso.
- *       400:
- *         description: Dados inválidos ou incompletos.
- */
-
-/**
- * @openapi
- * /auth/register/medic:
- *   post:
- *     tags:
- *       - Auth
- *     summary: Registro de médico
- *     description: Cria um novo usuário com o papel `medic`.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/MedicRegister'
- *     responses:
- *       201:
- *         description: Usuário médico criado com sucesso.
- *       400:
- *         description: Dados inválidos ou incompletos.
- */
-
-/**
- * @openapi
- * /auth/register/patient:
- *   post:
- *     tags:
- *       - Auth
- *     summary: Registro de paciente
- *     description: Cria um novo usuário com o papel `patient`.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/PatientRegister'
- *     responses:
- *       201:
- *         description: Usuário paciente criado com sucesso.
- *       400:
- *         description: Dados inválidos ou incompletos.
- */
-
-/**
- * @openapi
+ * @swagger
  * /auth/register:
  *   post:
- *     tags:
- *       - Auth
- *     summary: Registro de usuário (genérico)
- *     description: Rota real que aceita qualquer tipo de usuário com base no campo `role`.
+ *     summary: Register user
+ *     tags: 
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             oneOf:
- *               - $ref: '#/components/schemas/AdminRegister'
- *               - $ref: '#/components/schemas/MedicRegister'
- *               - $ref: '#/components/schemas/PatientRegister'
- *             discriminator:
- *               propertyName: role
- *               mapping:
- *                 admin: '#/components/schemas/AdminRegister'
- *                 medic: '#/components/schemas/MedicRegister'
- *                 patient: '#/components/schemas/PatientRegister'
+ *             oneOf: 
+ *              - $ref: '#/components/schemas/AdminRegister'
+ *              - $ref: '#/components/schemas/PatientRegister'
+ *              - $ref: '#/components/schemas/MedicRegister'
  *     responses:
- *       201:
- *         description: Usuário criado com sucesso.
+ *       200:
+ *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
- *         description: Dados inválidos.
+ *         description: Bad Request (e.g., missing fields)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post("/register",
     validate({body: registerSchema}),
