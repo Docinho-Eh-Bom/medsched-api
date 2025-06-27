@@ -3,18 +3,32 @@ import { APIError } from '../errors/api-error';
 
 export function errorHandler (err: Error, req: Request, res: Response, next: NextFunction) {
    console.error(err);
-   let statusCode = 500;
-   let message = 'Internal Server Error';
-
-   if (err instanceof SyntaxError && 'body' in err) {
-      res.status(400).json({ error: 'Request body must be a valid JSON.' });
-      return;
+   
+   //json error
+   if(err instanceof SyntaxError && 'body' in err){
+      return res.status(400).json({
+         sucess: false,
+         message: 'Invalid JSON in the request body',
+         statusCode: 400,
+         errors: null
+      });
    }
 
-   if (err instanceof APIError) {
-      statusCode = err.statusCode;
-      message = err.message;
+   //apierror error
+   if(err instanceof APIError){
+      return res.status(err.statusCode).json({
+         success: false,
+         message: err.message,
+         statusCode: err.statusCode,
+         errors: err.errors || null
+      });
    }
 
-   res.status(statusCode).json({ error: message });
+   //generic error
+   return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      statusCode: 500,
+      errors: null
+   });
 }
