@@ -1,28 +1,26 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { Express, Request, Response } from 'express';
-
-const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'MedSched API',
-    version: '1.0.0',
-    description: 'Documentação da API de agendamentos médicos',
-  },
-  servers: [
-    {
-      url: 'http://localhost:3000',
-      description: 'Servidor local',
-    },
-  ],
-};
-
+import { Express } from 'express';
+import { components } from './components.js';
 
 const options = {
-  swaggerDefinition,
-  apis: [
-    './src/routes/**/*.ts',        // ← rotas com @openapi
-    './src/swagger/components.ts', // ← schemas externos
+  definition: {
+    openapi: '3.0.3',
+    info: {
+      title: 'MedSched API',
+      version: '1.0.0',
+      description: 'Documentação da API de agendamentos médicos',
+    },
+    components,
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Servidor local',
+      },
+    ],
+  },
+    apis: [
+    './src/routes/**/*.ts',
   ],
 };
 
