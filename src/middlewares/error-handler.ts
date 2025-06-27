@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { APIError } from '../errors/api-error'; 
 
-export function errorHandler (err: any, req: Request, res: Response, next: NextFunction) {
+export function errorHandler (err: any, req: Request, res: Response, next: NextFunction): void {
    console.error(err);
    //json error
    if(err instanceof SyntaxError && 'body' in err){
-      return res.status(400).json({
+      res.status(400).json({
          sucess: false,
          message: 'Invalid JSON in the request body',
          statusCode: 400,
@@ -15,7 +15,7 @@ export function errorHandler (err: any, req: Request, res: Response, next: NextF
 
    //apierror error
    if(err instanceof APIError){
-      return res.status(err.statusCode).json({
+      res.status(err.statusCode).json({
          success: false,
          message: err.message,
          statusCode: err.statusCode,
@@ -24,7 +24,7 @@ export function errorHandler (err: any, req: Request, res: Response, next: NextF
    }
 
    //generic error
-   return res.status(500).json({
+   res.status(500).json({
       success: false,
       message: 'Internal Server Error',
       statusCode: 500,
