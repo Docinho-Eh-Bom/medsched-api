@@ -138,7 +138,7 @@ export class UserRepository implements UserRepositoryInterface{
             if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new NotFoundError("User not found.");
             }
-            console.error("Error deleting user:", error);
+            throw new BadRequestError("Error deleting user.");
         }
         return null;
     }
@@ -339,7 +339,6 @@ export class UserRepository implements UserRepositoryInterface{
         }
 
         }catch(error) {
-            console.log(error);
             throw new BadRequestError("Could not add available slot for the medic.");
         }
     }
@@ -393,7 +392,6 @@ export class UserRepository implements UserRepositoryInterface{
             }
         }catch(error){
             throw new NotFoundError("Medic not found.");
-            return null;
         }
     }
 

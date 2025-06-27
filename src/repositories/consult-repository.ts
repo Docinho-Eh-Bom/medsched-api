@@ -23,44 +23,31 @@ export class ConsultRepository implements ConsultRepositoryInterface{
 
     //find consult by id    
     async findById(id: string): Promise<Consult | null> {
-        try{
-            const consult = await prisma.consult.findUnique({
-            where: { id }
+        const consult = await prisma.consult.findUnique({
+        where: { id }
         });
+        if(!consult)  throw new NotFoundError("Consult not found.");
         return consult as Consult | null;
-        }catch(error) {
-            throw new NotFoundError("Consult not found.");
-            return null;
-        }
     }
 
     //find consult by patient id
     async findByPatientId(patientId: string): Promise<Consult[]> {
-        try{
-            const consults = await prisma.consult.findMany({
-            where: { patientId },
-            orderBy: { date: 'asc' }
+        const consults = await prisma.consult.findMany({
+        where: { patientId },
+        orderBy: { date: 'asc' }
         });
+        if(!consults || consults.length === 0) throw new NotFoundError("No consults found for the specified patient.");
         return consults as Consult[];
-        }catch(error) {
-            throw new NotFoundError("Could not retrieve consults for the specified patient.");
-            return [];
-        }
-
     }
     
     //find consult by medic id
     async findByMedicId(medicId: string): Promise<Consult[]> {
-        try{
-            const consults = await prisma.consult.findMany({
-            where: { medicId },
-            orderBy: { date: 'asc' }
+        const consults = await prisma.consult.findMany({
+        where: { medicId },
+        orderBy: { date: 'asc' }
         });
+        if(!consults || consults.length === 0) throw new NotFoundError("No consults found for the specified medic.");
         return consults as Consult[];
-        }catch(error) {
-            throw new NotFoundError("Could not retrieve consults for the specified medic.");
-            return [];
-        }
     }
 
     //update consult by consult id, omitting certain fields
@@ -74,10 +61,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
                 updatedAt: new Date() 
             }
         });
+
+        if(!updatedConsult) throw new NotFoundError("Consult not found.");
+
         return updatedConsult as Consult | null;
         }catch(error) {
             throw new BadRequestError("Could not update consult. Please check the provided data.");
-            return null;
         }
     }
 
@@ -91,10 +80,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
                 updatedAt: new Date()
             }
         });
+
+        if(!updatedConsult) throw new NotFoundError("Consult not found.");
+
         return updatedConsult as Consult | null;
         }catch(error) {
             throw new BadRequestError("Could not update consult status. Please check the provided data.");
-            return null;
         }
     }
 
@@ -104,10 +95,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
             const consults = await prisma.consult.findMany({
             orderBy: { date: 'asc' }
         });
+
+        if(!consults || consults.length === 0) throw new NotFoundError("No consults found.");
+
         return consults as Consult[];
         }catch(error) {
             throw new NotFoundError("Could not retrieve consults.");
-            return [];
         }
     }
     
@@ -118,10 +111,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
             where: { status },
             orderBy: { date: 'asc' }
         });
+
+        if(!consults || consults.length === 0) throw new NotFoundError(`No consults found with status ${status}.`);
+
         return consults as Consult[];
         }catch(error) {
             throw new NotFoundError("Could not retrieve consults for the specified status.");
-            return [];
         }
     }
 
@@ -135,10 +130,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
                 updatedAt: new Date() 
             }
         });
+
+        if(!updatedConsult) throw new NotFoundError("Consult not found.");
+
         return updatedConsult as Consult | null;
         }catch(error) {
             throw new BadRequestError("Could not add notes to consult. Please check the provided data.");
-            return null;
         }
     }
 
@@ -148,10 +145,12 @@ export class ConsultRepository implements ConsultRepositoryInterface{
             const deletedConsult = await prisma.consult.delete({
             where: { id }
         });
+
+        if(!deletedConsult) throw new NotFoundError("Consult not found.");
+
         return deletedConsult as Consult | null;
         }catch(error) {
             throw new NotFoundError("Could not delete consult. Consult not found.");
-            return null;
         }
     }
 
