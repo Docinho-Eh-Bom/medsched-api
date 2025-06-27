@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/users-service";
-import { userRoleValidation, userRoleSchema } from "../schema/users-schema";
+import {  userRoleSchema } from "../schema/users-schema";
+import { APIError } from "../errors/api-error";
+import { sendSuccess } from "../utils/response";
+import { send } from "process";
 
 export class UsersController {
 
@@ -13,127 +16,79 @@ export class UsersController {
     async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         const createdUser = await this.userService.createUser(req.body);
         if (!createdUser) {
-            res.status(500).json({
-                message: "Failed to create user",
-            });
-            return;
+            throw new APIError("Failed to create user", 500);
         }
         
-        res.status(201).json({
-            message: "User created successfully",
-            user: createdUser,
-        });
+        sendSuccess(res, "User created successfully", createdUser, 201);
     }
 
     //update user
     async updateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.userId;
         if (!id) {
-            res.status(400).json({
-                message: "Invalid request: User ID is required.",
-            });
-            return;
+            throw new APIError("Invalid request: User ID is required.", 400);
         }        
 
         if (!req.user?.userId || !req.user?.role) {
-            res.status(401).json({
-                message: "Unauthorized: Missing user credentials.",
-            });
-            return;
+            throw new APIError("Unauthorized: Missing user credentials.", 401);
         }
 
         if (req.user.role !== 'admin' && req.user.userId !== id) {
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to update this user.",
-            });
-            return;
+            throw new APIError("Forbidden: You don't have permission to update this user.", 403);
         }
 
         const updatedUser = await this.userService.updateUser(id, req.body, req.user.userId, req.user.role);
 
         if (!updatedUser) {
-            res.status(404).json({
-                message: "User not found or update failed",
-            });
-            return;
+            throw new APIError("Failed to update user", 500);
         }
 
-        res.status(200).json({
-            message: "User updated successfully",
-            user: updatedUser,
-        });
+        sendSuccess(res, "User updated successfully", updatedUser);
     }
 
     //get user by id
     async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.id;
         if (!id) {
-            res.status(400).json({
-                message: "Invalid request: User ID is required.",
-            });
-            return;
+            throw new APIError("Invalid request: User ID is required.", 400);
         }
 
         const user = await this.userService.getUserById(id);
         if (!user) {
-            res.status(404).json({
-                message: "User not found",
-            });
-            return;
+            throw new APIError("User not found", 404);
         }
 
-        res.status(200).json({
-            message: "User retrieved successfully",
-            user,
-        });
+        sendSuccess(res, "User retrieved successfully", user);
     }
 
     //list by role
     async listByRole(req: Request, res: Response, next: NextFunction): Promise<void> {
         const role = req.params.role;
         if (!role) {
-            res.status(400).json({
-                message: "Invalid request: Role is required.",
-            });
-            return;
+            throw new APIError("Invalid request: Role is required.", 400);
         }
 
         const parsedRole = userRoleSchema.safeParse(role);
         if (!parsedRole.success){
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to list users by role.",
-            });
-            return;
+            throw new APIError("Invalid role format", 400, parsedRole.error.flatten());
         }
 
         if (!req.user?.role) {
-            res.status(401).json({
-                message: "Unauthorized: Missing user credentials.",
-            });
-            return;
+            throw new APIError("Unauthorized: Missing user credentials.", 401);
         }
 
         const users = await this.userService.listByRole(parsedRole.data, req.user.role);
-        res.status(200).json({
-            message: "Users retrieved successfully",
-            users,
-        });
+        sendSuccess(res, "Users retrieved successfully", users);
     }
 
     //lis all users (admins only)
     async listAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         if (!req.user?.role || req.user.role !== 'admin') {
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to list all users.",
-            });
-            return;
+            throw new APIError("Forbidden: Only admins can list all users.", 403);
         }
 
         const users = await this.userService.listAll(req.user.role);
-        res.status(200).json({
-            message: "Users retrieved successfully",
-            users,
-        });
+        sendSuccess(res, "All users retrieved successfully", users);
     }
 
     //add medic slot
@@ -143,93 +98,57 @@ export class UsersController {
         console.log("MedicId:", medicId);
 
         if (!medicId) {
-            res.status(400).json({
-                message: "Invalid request: User ID is required.",
-            });
-            return;
+            throw new APIError("Invalid request: User ID is required.", 400);
         }
 
         if (!req.user || (req.user.role !== 'admin' && req.user.userId !== medicId)){
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to add slots for this medic.",
-            });
-            return;
+            throw new APIError("Forbidden: You don't have permission to add medic slots.", 403);
         }
 
         const slotData = req.body;
         const addedSlot = await this.userService.addMedicAvailableSlot(medicId, slotData.slot);
         if (!addedSlot) {
-            res.status(500).json({
-                message: "Failed to add medic slot",
-            });
-            return;
+            throw new APIError("Failed to add medic slot", 500);
         }
 
-        res.status(201).json({
-            message: "Medic slot added successfully",
-            slot: addedSlot,
-        });
+        sendSuccess(res, "Medic slot added successfully", addedSlot, 201);
     }
 
     //get medic slots
     async getMedicSlots(req: Request, res: Response, next: NextFunction): Promise<void>{
         const medicId = req.params.userId;
         if (!medicId) {
-            res.status(400).json({
-                message: "Invalid request: User ID is required.",
-            });
-            return;
+            throw new APIError("Invalid request: User ID is required.", 400);
         }
         
         if (!req.user || (req.user.role !== 'admin' && req.user.userId !== medicId)){
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to  access medic slots.",
-            });
-            return;
+            throw new APIError("Forbidden: You don't have permission to view medic slots.", 403);
         }
 
         const slots = await this.userService.getMedicAvailableSlots(medicId);
         if (!slots || slots.length === 0) {
-            res.status(404).json({
-                message: "No slots found for the specified medic.",
-            });
-            return;
+            throw new APIError("No slots found for this medic", 404);
         }
 
-        res.status(200).json({
-            message: "Medic slots retrieved successfully",
-            slots,
-        });
+        sendSuccess(res, "Medic slots retrieved successfully", slots);
     }
 
     //delete user
     async deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.userId;
         if (!id) {
-            res.status(400).json({
-                message: "Invalid request: User ID is required.",
-            });
-            return;
+            throw new APIError("Invalid request: User ID is required.", 400);
         }
 
         if (!req.user?.userId || !req.user?.role) {
-            res.status(401).json({
-                message: "Unauthorized: Missing user credentials.",
-            });
-        return;
+            throw new APIError("Unauthorized: Missing user credentials.", 401);
         }
 
         if (req.user.role !== 'admin' && req.user.userId !== id) {
-            res.status(403).json({
-                message: "Forbidden: You don't have permission to delete this user.",
-            });
-            return;
+            throw new APIError("Forbidden: You don't have permission to delete this user.", 403);
         }
 
         const deletedUser = await this.userService.deleteUser(id, req.user.userId, req.user.role);
-        res.status(200).json({
-            message: "User deleted successfully",
-            user: deletedUser,
-        });
+        sendSuccess(res, "User deleted successfully", deletedUser);
     }
 }
