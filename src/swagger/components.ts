@@ -1,113 +1,173 @@
-/**
- * @openapi
- * components:
- *   schemas:
- *     AdminRegister:
- *       type: object
- *       required:
- *         - firstName
- *         - lastName
- *         - email
- *         - password
- *         - role
- *       properties:
- *         firstName:
- *           type: string
- *           example: "Admin"
- *         lastName:
- *           type: string
- *           example: "teste"
- *         email:
- *           type: string
- *           format: email
- *           example: "admin@email.com"
- *         password:
- *           type: string
- *           example: "12345+A"
- *         role:
- *           type: string
- *           enum: [admin]
- *
- *     MedicRegister:
- *       type: object
- *       required:
- *         - firstName
- *         - lastName
- *         - email
- *         - password
- *         - role
- *         - medicData
- *       properties:
- *         firstName:
- *           type: string
- *           example: "Medico"
- *         lastName:
- *           type: string
- *           example: "Teste"
- *         email:
- *           type: string
- *           format: email
- *           example: "medico@email.com"
- *         password:
- *           type: string
- *           example: "12345+A"
- *         role:
- *           type: string
- *           enum: [medic]
- *         medicData:
- *           type: object
- *           required:
- *             - speciality
- *             - crm
- *           properties:
- *             speciality:
- *               type: string
- *               example: "Psiquiatria"
- *             crm:
- *               type: string
- *               example: "987654-57/RS"
- *
- *     PatientRegister:
- *       type: object
- *       required:
- *         - firstName
- *         - lastName
- *         - email
- *         - password
- *         - role
- *         - patientData
- *       properties:
- *         firstName:
- *           type: string
- *           example: "Paciente"
- *         lastName:
- *           type: string
- *           example: "Teste"
- *         email:
- *           type: string
- *           format: email
- *           example: "pacientex@email.com"
- *         password:
- *           type: string
- *           example: "12345+A"
- *         role:
- *           type: string
- *           enum: [patient]
- *         patientData:
- *           type: object
- *           required:
- *             - cpf
- *             - cellphone
- *             - birthDate
- *           properties:
- *             cpf:
- *               type: string
- *               example: "001.002.003-04"
- *             cellphone:
- *               type: string
- *               example: "51-1324-5678"
- *             birthDate:
- *               type: string
- *               format: date
- *               example: "2003-10-16"
- */
+
+export const components = {
+    securitySchemes:{
+        BearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat:  'JWT'
+        },
+    },
+    schemas:{
+        Error:{
+            type: 'object',
+            properties: {
+                statusCode: { type: 'integer', 
+                            example: 400 },
+                message: { type: 'string', 
+                        example: 'Invalid request' },
+                error: { type: 'array', 
+                        items: { type: 'string' }, 
+                        example: ['Invalid email format', 'Password too short'] },
+            },
+        },
+        Login: {
+            type: 'object',
+            properties: {
+                email: { type: 'string', 
+                        format: 'email', 
+                        example: 'genoveva@email.com' },
+                password: { type: 'string', 
+                            minLength: 6, 
+                            maxLength: 20, 
+                            pattern: '^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};\':"\\\\|,.<>/?]).+$', 
+                            example: '12345+A' },
+            },
+            required: ['email', 'password'],
+        },
+        AdminRegister: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string', 
+                            minLength: 3, 
+                            maxLength: 50, 
+                            example: 'Fulano' },
+                lastName: { type: 'string', 
+                            minLength: 4, 
+                            maxLength: 50, 
+                            example: 'Silveira' },
+                email: { type: 'string', 
+                        format: 'email',
+                        example: 'fulano@gmail.com'},
+                password: { type: 'string', 
+                            minLength: 6, 
+                            maxLength: 20, 
+                            pattern: '^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};\':"\\\\|,.<>/?]).+$',
+                            example: 'FULANO1+' },
+                role: { type: 'string', enum: ['admin'] },
+            },
+            required: ['firstName', 'lastName', 'email', 'password', 'role'],
+        },
+        PatientRegister: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string', 
+                            minLength: 3, 
+                            maxLength: 50,
+                            example: 'Ciclano' },
+                lastName: { type: 'string', 
+                            minLength: 4, 
+                            maxLength: 50,
+                            example: 'Souza' },
+                email: { type: 'string', 
+                        format: 'email',
+                        example: 'ciclano@gmail.com'},
+                password: { type: 'string', 
+                            minLength: 6, 
+                            maxLength: 20, 
+                            pattern: '^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};\':"\\\\|,.<>/?]).+$',
+                            example: 'CICLANO1+' },
+                role: { type: 'string', enum: ['patient'] },
+                patientData: {
+                    type: 'object',
+                    properties: {
+                        cpf: { type: 'string', 
+                                pattern: '^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$',
+                                example: '123.456.789-00' },
+                        cellphone: { type: 'string',
+                                    pattern: '^\\d{2}-\\d{5}-\\d{4}$',
+                                    example: '51-34567-8901' },
+                        birthDate: { type: 'string', 
+                                    format: 'date',
+                                    example: '1990-01-01' },
+                    },
+                    required: ['cpf', 'cellphone', 'birthDate'],
+                },
+            },
+            required: ['firstName', 'lastName', 'email', 'password', 'role', 'patientData'],
+        },
+        MedicRegister: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string', 
+                            minLength: 3, 
+                            maxLength: 50,
+                            example: 'Beltrano' },
+                lastName: { type: 'string', 
+                            minLength: 4, 
+                            maxLength: 50,
+                            example: 'Santos' },
+                email: { type: 'string', 
+                        format: 'email',
+                        example: 'beltrano@gmail.com'},
+                password: { type: 'string', 
+                            minLength: 6, 
+                            maxLength: 20, 
+                            pattern: '^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\[\\]{};\':"\\\\|,.<>/?]).+$',
+                            example: 'BELTRANO1+' },
+                role: { type: 'string', enum: ['medic'] },
+                medicData: {
+                    type: 'object',
+                    properties: {
+                        speciality: { type: 'string', 
+                                    minLength: 3, 
+                                    maxLength: 85,
+                                    example: 'Cardiologia' },
+                        crm: { type: 'string', 
+                                pattern: '^\\d{6}-\\d{2}/[A-Z]{2}$',
+                                example: '123456-78/RS' },
+                        availableSlots: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                format: 'date-time',
+                                example: '2023-10-01T10:00:00Z',
+                            },
+                        },
+                    },
+                    required: ['speciality', 'crm'],
+                },
+            },
+            required: ['firstName', 'lastName', 'email', 'password', 'role', 'medicData'],
+        },
+        CreateConsult:{
+            type: 'object',
+            properties: {
+                patientId: { type: 'string',
+                            format: 'uuid',},
+                medicId: { type: 'string',
+                        format: 'uuid' },
+                dateTime: { type: 'string',
+                            format: 'date-time',
+                            example: '2023-10-01T10:00:00Z' },
+                status: { type: 'string', 
+                        enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED'],
+                        default: 'SCHEDULED' },
+            },
+            required: ['patientId', 'medicId', 'dateTime'],
+        },
+        CancelConsult:{
+            type: 'object',
+            properties: {
+                status: { type: 'string', enum: ['CANCELLED'] },
+            },
+            required: ['status'],
+        },
+        AddNotesToTheConsult:{
+            type: 'object',
+            properties: {
+                notes: { type: 'string', minLength: 1, maxLength: 1000, example: 'Paciente apresenta sintomas de gripe e febre.'},
+            },
+            required: ['notes'],
+        }
+    }
+}
