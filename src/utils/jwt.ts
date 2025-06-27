@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { User } from '../models/user';
-import { env } from '../config/env';
+import { User } from '../models/user.js';
+import { env } from '../config/env.js';
 
 export function hashPassword(password: string): string {
    return bcrypt.hashSync(password, 10);
