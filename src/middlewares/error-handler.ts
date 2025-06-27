@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { APIError } from '../errors/api-error'; 
 
-export function errorHandler (err: Error, req: Request, res: Response, next: NextFunction) {
+export function errorHandler (err: any, req: Request, res: Response, next: NextFunction) {
    console.error(err);
-   
    //json error
    if(err instanceof SyntaxError && 'body' in err){
       return res.status(400).json({
