@@ -7,7 +7,7 @@ API REST para gerenciamento de **consultas médicas**, com autenticação via JW
 
 ## Documentação da API
 
-Acesse a documentação em: `${API_BASE_URL}/medsched-api-docs/`
+Acesse a documentação em: `https://medsched-api.onrender.com/medsched-api-docs`
 
 
 ## Autenticação
