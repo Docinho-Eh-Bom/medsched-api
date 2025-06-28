@@ -34,12 +34,12 @@ Authorization: Bearer <token>
 
 3. Configure as variáveis de ambiente:  
    Crie um arquivo `.env` na raiz do projeto e configure as variáveis, especialmente o `JWT_SECRET`.
-   
+
    ```bash
    #Sua porta onde a aplicação irá rodar  
    PORT=3000
    #JSegredo para a geração dos tokens JWT
-   JWT_SECRET="20031711"
+   JWT_SECRET="YourSecretHere"
    #Caminho para o arquivo para a database SQLite
    DATABASE_URL="file:./dev.db"
    ```
