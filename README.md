@@ -34,6 +34,7 @@ Authorization: Bearer <token>
 
 3. Configure as variáveis de ambiente:  
    Crie um arquivo `.env` na raiz do projeto e configure as variáveis, especialmente o `JWT_SECRET`.
+   
    ```bash
    #Sua porta onde a aplicação irá rodar  
    PORT=3000
