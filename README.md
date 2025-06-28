@@ -92,6 +92,7 @@ MedSched/
 │   ├── repositories/       # Acesso e manipulação de dados
 │   ├── routes/             # Rotas da API
 │   ├── schema/             # Schemas do Zod para validação
+|   ├── scripts/            # Scripts da API
 │   ├── services/           # Regras de negócio
 │   ├── swagger/            # Configuração do Swagger
 │   ├── utils/              # Funções utilitárias
