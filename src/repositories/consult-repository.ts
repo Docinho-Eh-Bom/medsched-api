@@ -24,7 +24,11 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     //find consult by id    
     async findById(id: string): Promise<Consult | null> {
         const consult = await prisma.consult.findUnique({
-        where: { id }
+        where: { id },
+        include: {
+            patient: { select: {firstName: true, lastName: true} },
+            medic: { select: {firstName: true, lastName: true} }
+        }
         });
         if(!consult)  throw new NotFoundError("Consult not found.");
         return consult as Consult | null;
@@ -34,6 +38,10 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     async findByPatientId(patientId: string): Promise<Consult[]> {
         const consults = await prisma.consult.findMany({
         where: { patientId },
+        include:{
+                patient: { select: { firstName: true, lastName: true } },
+                medic: { select: { firstName: true, lastName: true } }
+            },
         orderBy: { date: 'asc' }
         });
         if(!consults || consults.length === 0) throw new NotFoundError("No consults found for the specified patient.");
@@ -44,6 +52,10 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     async findByMedicId(medicId: string): Promise<Consult[]> {
         const consults = await prisma.consult.findMany({
         where: { medicId },
+        include:{
+                patient: { select: { firstName: true, lastName: true } },
+                medic: { select: { firstName: true, lastName: true } }
+            },
         orderBy: { date: 'asc' }
         });
         if(!consults || consults.length === 0) throw new NotFoundError("No consults found for the specified medic.");
@@ -93,7 +105,11 @@ export class ConsultRepository implements ConsultRepositoryInterface{
     async listAll(): Promise<Consult[]> {
         try{
             const consults = await prisma.consult.findMany({
-            orderBy: { date: 'asc' }
+            orderBy: { date: 'asc' },
+            include:{
+                patient: { select: { firstName: true, lastName: true } },
+                medic: { select: { firstName: true, lastName: true } }
+            }
         });
 
         if(!consults || consults.length === 0) throw new NotFoundError("No consults found.");
@@ -109,6 +125,10 @@ export class ConsultRepository implements ConsultRepositoryInterface{
         try{
             const consults = await prisma.consult.findMany({
             where: { status },
+            include:{
+                patient: { select: { firstName: true, lastName: true } },
+                medic: { select: { firstName: true, lastName: true } }
+            },
             orderBy: { date: 'asc' }
         });
 
