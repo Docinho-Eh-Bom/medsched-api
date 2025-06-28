@@ -51,6 +51,57 @@ router.get("/",authenticate,
     authorize('admin'),
     asyncHandler(controller.listAll.bind(controller)));
 
+/**
+ * @swagger
+ * /users/{role}:
+ *   get:
+ *     summary: List users by role
+ *     tags: 
+ *       - Users
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: string
+ *           enum: [patient, medic]
+ *         description: Role of the users to retrieves
+ *     responses:
+ *       200:
+ *         description: List of users by role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Forbidden 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+//list by role
+router.get('/:role', authenticate,
+    authorize('admin', 'patient', 'medic'),
+    asyncHandler(controller.listByRole.bind(controller)));
+
 
 /**
  * @swagger
