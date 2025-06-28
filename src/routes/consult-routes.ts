@@ -86,7 +86,7 @@ router.post("/", authenticate,
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Consult'
+ *                 $ref: '#/components/schemas/ConsultResponse'
  *       400:
  *         description: Bad request - Invalid or missing token
  *         content:
@@ -137,7 +137,7 @@ router.get("/", authenticate,
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Consult'
+ *                 $ref: '#/components/schemas/ConsultResponse'
  *       400:
  *         description: Bad request - Invalid or missing status/token
  *         content:
@@ -186,7 +186,7 @@ router.get("/status/:status", authenticate,
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Consult'
+ *               $ref: '#/components/schemas/ConsultResponse'
  *       400:
  *         description: Bad request - Invalid or missing Id
  *         content:
@@ -250,7 +250,7 @@ router.get("/:id", authenticate,
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Consult'
+ *                 $ref: '#/components/schemas/ConsultResponse'
  *       400:
  *         description: Bad request - Invalid or missing patient Id
  *         content:
@@ -314,7 +314,7 @@ router.get("/patient/:patientId", authenticate,
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Consult'
+ *                 $ref: '#/components/schemas/ConsultResponse'
  *       400:
  *         description: Bad request - Invalid or missing medic Id
  *         content:

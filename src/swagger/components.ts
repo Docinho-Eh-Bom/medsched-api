@@ -231,7 +231,7 @@ export const components = {
                             format: 'uuid',},
                 medicId: { type: 'string',
                         format: 'uuid' },
-                dateTime: { type: 'string',
+                date: { type: 'string',
                             format: 'date-time',
                             example: '2023-10-01T10:00:00Z' },
                 status: { type: 'string', 
@@ -246,7 +246,51 @@ export const components = {
                         maxLength: 1000,
                         example: 'Paciente apresenta sintomas de gripe e febre.' },
             },
-            required: ['patientId', 'medicId', 'dateTime'],
+            required: ['patientId', 'medicId', 'date'],
+        },
+        ConsultResponse:{
+            type: 'object',
+                properties: {
+                id: { type: 'string',
+                        format: 'uuid' },
+                patientId: { type: 'string',
+                        format: 'uuid' },
+                medicId: { type: 'string',
+                        format: 'uuid' },
+                date: {
+                        type: 'string',
+                        format: 'date-time',
+                        example: '2023-10-01T10:00:00Z'
+                },
+                status: {
+                type: 'string',
+                enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED']
+                },
+                notes: {
+                    type: 'string',
+                    example: 'Paciente apresenta sintomas de gripe e febre.'
+                },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
+                patientData: {
+                type: 'object',
+                properties: {
+                    firstName: { type: 'string',
+                        example: 'Ciclano' },
+                    lastName: { type: 'string',
+                        example: 'Souza' }
+                },
+                },
+                medicData: {
+                type: 'object',
+                properties: {
+                    firstName: { type: 'string',
+                        example: 'Beltrano' },
+                    lastName: { type: 'string',
+                        example: 'Santos' }
+                }
+                }
+            },
         },
         CreateConsult:{
             type: 'object',
@@ -255,7 +299,7 @@ export const components = {
                             format: 'uuid',},
                 medicId: { type: 'string',
                         format: 'uuid' },
-                dateTime: { type: 'string',
+                date: { type: 'string',
                             format: 'date-time',
                             example: '2023-10-01T10:00:00Z' },
                 status: { type: 'string', 
@@ -266,7 +310,7 @@ export const components = {
                         maxLength: 1000,
                         example: 'Paciente apresenta sintomas de gripe e febre.' },
             },
-            required: ['patientId', 'medicId', 'dateTime'],
+            required: ['patientId', 'medicId', 'date'],
         },
         UpdateConsultStatus:{
             type: 'object',
