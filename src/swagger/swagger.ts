@@ -17,6 +17,10 @@ const options = {
         url: 'http://localhost:3000',
         description: 'Servidor local',
       },
+      {
+        url: 'https://medsched-api.onrender.com',
+        description: 'Servidor em produção (Render)',
+        },
     ],
   },
     apis: [
