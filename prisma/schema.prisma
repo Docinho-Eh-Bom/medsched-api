@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgres"
+  url      = "postgresql://medsched_api_user:RgLcxRqvJl9zBSET0fHfWFw7fyoyGxpM@dpg-d1g2gmnfte5s7385jh7g-a.oregon-postgres.render.com/medsched_api_db"
 }
 
 enum UserRole{

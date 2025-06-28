@@ -2,6 +2,7 @@ node_modules
 dist
 .env
 .vscode
+prisma/dev.db
 prisma/dev.db-journal
 auth-tests.http
 consult-tests.http
