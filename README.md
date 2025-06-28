@@ -8,7 +8,7 @@ API REST para gerenciamento de **consultas médicas**, com autenticação via JW
 ## Documentação da API
 
 A documentação Swagger está disponível em:
-{port}/medsched-api-docs/
+http://localhost:3000/medsched-api-docs/
 
 
 ## Autenticação
@@ -75,7 +75,7 @@ npm start
 ## Usuários Iniciais
 
 ```bash
-# Script para criar 3 usuários iniciais: admin, patient, medic
+# Script para criar 3 usuários iniciais: admin, patient,
 npm run create:users
 ```
 
