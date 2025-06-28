@@ -74,7 +74,7 @@ npm start
 ## Usuários Iniciais
 
 ```bash
-# Script para criar 3 usuários iniciais: admin, patient,
+# Script para criar 3 usuários iniciais: admin, patient, medic
 npm run create:users
 ```
 
