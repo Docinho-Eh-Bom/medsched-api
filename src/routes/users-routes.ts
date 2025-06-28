@@ -102,7 +102,7 @@ router.get("/:id", authenticate,
 
 /**
  * @swagger
- * /{medicId}/slots:
+ * /users/{medicId}/slots:
  *   post:
  *     summary: Add a new available slot for a medic
  *     tags: 
@@ -168,7 +168,7 @@ router.post("/:userId/slots", authenticate,
 
 /**
  * @swagger
- * /{medicId}/slots:
+ * /users/{medicId}/slots:
  *   get:
  *     summary: Get all available slots for a medic by their Id
  *     tags: 
@@ -221,7 +221,7 @@ router.get("/:userId/slots", authenticate,
 
 /**
  * @swagger
- * /users:
+ * /users/users:
  *   post:
  *     summary: Create a new user 
  *     tags: 
