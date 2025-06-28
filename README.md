@@ -7,8 +7,7 @@ API REST para gerenciamento de **consultas médicas**, com autenticação via JW
 
 ## Documentação da API
 
-A documentação Swagger está disponível em:
-http://localhost:3000/medsched-api-docs/
+Acesse a documentação em: `${API_BASE_URL}/medsched-api-docs/`
 
 
 ## Autenticação
