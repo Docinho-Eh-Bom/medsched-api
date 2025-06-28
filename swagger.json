@@ -380,7 +380,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "dateTime": {
+          "date": {
             "type": "string",
             "format": "date-time",
             "example": "2023-10-01T10:00:00Z"
@@ -412,8 +412,76 @@
         "required": [
           "patientId",
           "medicId",
-          "dateTime"
+          "date"
         ]
+      },
+      "ConsultResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "patientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-10-01T10:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "COMPLETED",
+              "CANCELLED"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "example": "Paciente apresenta sintomas de gripe e febre."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "patientData": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "example": "Ciclano"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "Souza"
+              }
+            }
+          },
+          "medicData": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "example": "Beltrano"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "Santos"
+              }
+            }
+          }
+        }
       },
       "CreateConsult": {
         "type": "object",
@@ -426,7 +494,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "dateTime": {
+          "date": {
             "type": "string",
             "format": "date-time",
             "example": "2023-10-01T10:00:00Z"
@@ -450,7 +518,7 @@
         "required": [
           "patientId",
           "medicId",
-          "dateTime"
+          "date"
         ]
       },
       "UpdateConsultStatus": {
@@ -758,7 +826,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Consult"
+                    "$ref": "#/components/schemas/ConsultResponse"
                   }
                 }
               }
@@ -832,7 +900,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Consult"
+                    "$ref": "#/components/schemas/ConsultResponse"
                   }
                 }
               }
@@ -900,7 +968,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Consult"
+                  "$ref": "#/components/schemas/ConsultResponse"
                 }
               }
             }
@@ -1080,7 +1148,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Consult"
+                    "$ref": "#/components/schemas/ConsultResponse"
                   }
                 }
               }
@@ -1170,7 +1238,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Consult"
+                    "$ref": "#/components/schemas/ConsultResponse"
                   }
                 }
               }
