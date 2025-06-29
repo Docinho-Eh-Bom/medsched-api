@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ConsultService } from "../services/consult-service.js";
 import { ConsultStatus, CreateConsultSchema, UpdateConsultStatusSchema } from "../schema/consult-schema.js";
 import { APIError } from "../errors/api-error.js";
-import { sendSuccess } from "../utils/response.js";
+
 
 export class ConsultController {
 
@@ -29,7 +29,7 @@ export class ConsultController {
             throw new APIError("Failed to create consult", 500);
         }
 
-        sendSuccess(res, "Consult created successfully", createdConsult, 201);
+        res.status(201).json({createdConsult });
     }
 
     //update consult status
@@ -46,7 +46,7 @@ export class ConsultController {
         }
 
         const updatedConsult = await this.consultService.updateStatus(id, parseResult.data, req.user.userId, req.user.role);
-        sendSuccess(res, "Consult status updated successfully", updatedConsult);
+        res.status(200).json({ updatedConsult });
     }
 
     //add notes to consult
@@ -63,7 +63,7 @@ export class ConsultController {
         }
 
         const updatedConsult = await this.consultService.addNotes(id, notes, req.user.userId, req.user.role);
-        sendSuccess(res, "Notes added successfully", updatedConsult);
+        res.status(200).json({ updatedConsult });
     }
 
     //search consults by id
@@ -79,7 +79,7 @@ export class ConsultController {
             throw new APIError("Consult not found or you don't have permission to view it.", 404);
         }
 
-        sendSuccess(res, "Consult retrieved successfully", consults);
+        res.status(200).json({ consults });
     }
 
     //list consults by patient id
@@ -95,7 +95,7 @@ export class ConsultController {
             throw new APIError("No consults found for this patient", 404);
         }
 
-        sendSuccess(res, "Consults retrieved successfully", consults);
+        res.status(200).json({ consults });
     }
 
     //list consults by medic id
@@ -111,7 +111,7 @@ export class ConsultController {
             throw new APIError("No consults found for this medic", 404);
         }
 
-        sendSuccess(res, "Consults retrieved successfully", consults);
+        res.status(200).json({ consults });
     }
 
     //list all consults
@@ -125,7 +125,7 @@ export class ConsultController {
             throw new APIError("No consults found", 404);
         }
 
-        sendSuccess(res, "All consults retrieved successfully", consults);
+        res.status(200).json({ consults });
     }
 
     //list consults by status
@@ -145,7 +145,7 @@ export class ConsultController {
             throw new APIError(`No consults found with status ${status}`, 404);
         }
 
-        sendSuccess(res, `Consults with status ${status} retrieved successfully`, consults);
+        res.status(200).json({ consults });
     }
 
     //delete consult
@@ -161,6 +161,6 @@ export class ConsultController {
             throw new APIError("Consult not found or you don't have permission to delete it.", 404);
         }
 
-        sendSuccess(res, "Consult deleted successfully", deleted);
+        res.status(200).json({ message: "Consult deleted successfully" });
     }   
 }

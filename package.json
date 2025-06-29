@@ -28,8 +28,8 @@
     "esbuild": "^0.25.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.8.2",
-    "tsx": "^4.19.4",
+    "prisma": "^6.10.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "helmet": "^8.1.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "tsc": "^2.0.4",
     "zod": "^3.25.67"
   }
 }

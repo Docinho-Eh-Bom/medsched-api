@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/users-service.js";
 import { APIError } from "../errors/api-error.js";
-import { sendSuccess } from "../utils/response.js";
-import { send } from "process";
 
 export class AuthController{
     private service: UserService;
@@ -18,7 +16,6 @@ export class AuthController{
         if (!result) {
             throw new APIError("Invalid email or password", 401);
         }
-        sendSuccess(res, "Login successful", { token: result.token });
     }
 
     //register
@@ -27,7 +24,6 @@ export class AuthController{
         if (!result) {
             throw new APIError("User registration failed", 400);
         }
-        sendSuccess(res, "User registered successfully", { user: result });
     }
 
     //current user
@@ -41,6 +37,6 @@ export class AuthController{
             throw new APIError("User not found", 404);
         }
 
-        sendSuccess(res, "Current user retrieved successfully", { user });
+       res.json({user});
     }
 }

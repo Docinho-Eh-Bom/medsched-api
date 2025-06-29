@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/users-service.js";
 import {  userRoleSchema } from "../schema/users-schema.js";
 import { APIError } from "../errors/api-error.js";
-import { sendSuccess } from "../utils/response.js";
+
 
 export class UsersController {
 
@@ -18,7 +18,7 @@ export class UsersController {
             throw new APIError("Failed to create user", 500);
         }
         
-        sendSuccess(res, "User created successfully", createdUser, 201);
+        res.status(201).json({createdUser});
     }
 
     //update user
@@ -42,7 +42,7 @@ export class UsersController {
             throw new APIError("Failed to update user", 500);
         }
 
-        sendSuccess(res, "User updated successfully", updatedUser);
+        res.status(200).json({updatedUser});
     }
 
     //get user by id
@@ -57,7 +57,7 @@ export class UsersController {
             throw new APIError("User not found", 404);
         }
 
-        sendSuccess(res, "User retrieved successfully", user);
+        res.status(200).json({user});
     }
 
     //list by role
@@ -77,7 +77,7 @@ export class UsersController {
         }
 
         const users = await this.userService.listByRole(parsedRole.data, req.user.role);
-        sendSuccess(res, "Users retrieved successfully", users);
+        res.status(200).json({users});
     }
 
     //lis all users (admins only)
@@ -87,7 +87,7 @@ export class UsersController {
         }
 
         const users = await this.userService.listAll(req.user.role);
-        sendSuccess(res, "All users retrieved successfully", users);
+        res.status(200).json({users});
     }
 
     //add medic slot
@@ -110,7 +110,7 @@ export class UsersController {
             throw new APIError("Failed to add medic slot", 500);
         }
 
-        sendSuccess(res, "Medic slot added successfully", addedSlot, 201);
+        res.status(201).json({addedSlot});
     }
 
     //get medic slots
@@ -129,7 +129,7 @@ export class UsersController {
             throw new APIError("No slots found for this medic", 404);
         }
 
-        sendSuccess(res, "Medic slots retrieved successfully", slots);
+        res.status(200).json({slots});
     }
 
     //delete user
@@ -148,6 +148,6 @@ export class UsersController {
         }
 
         const deletedUser = await this.userService.deleteUser(id, req.user.userId, req.user.role);
-        sendSuccess(res, "User deleted successfully", deletedUser);
+        res.status(200).json({message: "User deleted successfully", deletedUser});
     }
 }
