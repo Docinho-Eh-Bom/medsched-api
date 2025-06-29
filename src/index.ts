@@ -81,15 +81,39 @@ app.get('/patients', async (req: Request, res: Response) => {
 
 app.get('/consults', async (req: Request, res: Response) => {
   const consults = await prisma.consult.findMany({
-    select: {
-      id: true,
-      date: true,
-      medicId: true,
-      patientId: true,
-      status: true,
-    }
+include: {
+      medic: { 
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      patient: {  
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
   });
-  res.json(consults);
+
+    const flattened = consults.map(c => ({
+    id: c.id,
+    medicId: c.medicId,
+    patientId: c.patientId,
+    date: c.date,
+    status: c.status,
+    medic: {
+      firstName: c.medic.firstName,
+      lastName: c.medic.lastName,
+    },
+    patient: {
+      firstName: c.patient.firstName,
+      lastName: c.patient.lastName,
+    },
+  }));
+
+  res.json(flattened);
 });
 
 const loginHandler: RequestHandler = async (req, res) => {
@@ -120,7 +144,7 @@ const registerHandler: RequestHandler = async (req, res) => {
         lastName,
         email,
         password,
-        role: role || 'PATIENTT'//default is patient
+        role: role || 'PATIENT'//default is patient
       },
       select: {
         id: true,
@@ -140,6 +164,44 @@ const registerHandler: RequestHandler = async (req, res) => {
 };
 
 
+const createConsultHandler: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const { date, medicId, patientId } = req.body;
+
+    if (!date || !medicId || !patientId) {
+      res.status(400).json({ error: 'Missing fields (needs: date, medicId, patientId)' });
+    }
+
+    const [medic, patient] = await Promise.all([
+      prisma.medic.findUnique({ where: { userId: medicId } }),
+      prisma.patient.findUnique({ where: { userId: patientId } })
+    ]);
+
+    if (!medic) res.status(404).json({ error: 'Medic not found' });
+    if (!patient) res.status(404).json({ error: 'Patient not found' });
+
+    const newConsult = await prisma.consult.create({
+      data: {
+        date: new Date(date),
+        medicId,
+        patientId,
+        status: 'SCHEDULED' //default
+      },
+      include: {
+        medic: { select: { firstName: true, lastName: true } },
+        patient: { select: { firstName: true, lastName: true } }
+      }
+    });
+
+    res.status(201).json(newConsult);
+
+  } catch (error) {
+    console.error('EError creating consult:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+app.post('/consults', createConsultHandler);
 app.post('/register', registerHandler);
 app.post('/login', loginHandler);
 
