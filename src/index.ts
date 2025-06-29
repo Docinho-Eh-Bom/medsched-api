@@ -2,7 +2,7 @@ import { env } from './config/env.js';
 import express from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import { errorHandler } from './middlewares/error-handler.js';
 import { PrismaClient } from '@prisma/client';
 
@@ -29,7 +29,8 @@ app.get('/medics', async (req: Request, res: Response) => {
         select: {
           firstName: true,
           lastName: true,
-          email: true
+          email: true,
+          role: true
         }
       }
     }
@@ -39,7 +40,10 @@ app.get('/medics', async (req: Request, res: Response) => {
     userId: m.userId,
     firstName: m.user.firstName,
     lastName: m.user.lastName,
-    email: m.user.email
+    role: m.user.role,
+    email: m.user.email,
+    speciality: m.speciality,
+    crm: m.crm,
   }));
 
   res.json(flattened);
@@ -54,7 +58,8 @@ app.get('/patients', async (req: Request, res: Response) => {
         select: {
           firstName: true,
           lastName: true,
-          email: true
+          email: true,
+          role: true
         }
       }
     }
@@ -64,7 +69,10 @@ app.get('/patients', async (req: Request, res: Response) => {
     userId: p.userId,
     firstName: p.user.firstName,
     lastName: p.user.lastName,
-    email: p.user.email
+    email: p.user.email,
+    role: p.user.role,
+    cpf: p.cpf,
+    cellphone: p.cellphone,
   }));
 
   res.json(flattened);
@@ -84,14 +92,57 @@ app.get('/consults', async (req: Request, res: Response) => {
   res.json(consults);
 });
 
-app.post('/login', async (req: Request, res: Response) => {
+const loginHandler: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
   const user = await prisma.user.findUnique({ where: { email } });
+  
   if (!user || user.password !== password) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    res.status(401).json({ error: 'Invalid credentials' });
+    return; 
   }
+  
   res.json({ id: user.id, email: user.email, role: user.role });
-});
+};
+
+const registerHandler: RequestHandler = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, role } = req.body;
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      res.status(400).json({ error: 'Email already registered' });
+      return; 
+    }
+
+    const newUser = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password,
+        role: role || 'PATIENTT'//default is patient
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true
+      }
+    });
+
+    res.status(201).json({
+      id: newUser.id,
+      email: newUser.email,
+      role: newUser.role
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+app.post('/register', registerHandler);
+app.post('/login', loginHandler);
+
 
 app.use(errorHandler);
 
