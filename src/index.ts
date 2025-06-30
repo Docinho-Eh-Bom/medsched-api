@@ -159,6 +159,7 @@ const registerHandler: RequestHandler = async (req, res) => {
       role: newUser.role
     });
   } catch (error) {
+     console.error('Register error:', error);  // <-- adicione isso para ver o que deu errado no console
     res.status(500).json({ error: 'Internal server error' });
   }
 };
