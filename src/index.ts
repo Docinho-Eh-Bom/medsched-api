@@ -121,7 +121,6 @@ const loginHandler: RequestHandler = async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
   
   if (!user || user.password !== password) {
-    console.error('EError:', error);
     res.status(401).json({ error: 'Invalid credentials' });
     return; 
   }
