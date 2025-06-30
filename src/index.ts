@@ -121,6 +121,7 @@ const loginHandler: RequestHandler = async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
   
   if (!user || user.password !== password) {
+    console.error('EError:', error);
     res.status(401).json({ error: 'Invalid credentials' });
     return; 
   }
@@ -159,7 +160,7 @@ const registerHandler: RequestHandler = async (req, res) => {
       role: newUser.role
     });
   } catch (error) {
-     console.error('Register error:', error);  // <-- adicione isso para ver o que deu errado no console
+     console.error('Register error:', error); 
     res.status(500).json({ error: 'Internal server error' });
   }
 };
